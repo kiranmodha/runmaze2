@@ -6,6 +6,30 @@ class DatabaseHandler {
   static const String DATABASE_NAME = "runmaze.db";
   static const int DATABASE_VERSION = 2;
 
+  Database? _database;
+
+
+  Future<Database> get database async {
+    _database ??= await _initialize();  //If _database is null then initialize it
+     return _database!;
+  }
+
+
+  Future<String> get fullPath async {
+    final path = await getDatabasesPath();
+    return join(path, DATABASE_NAME);
+  }
+
+
+  Future<Database> _initialize() async {
+    final path = await fullPath;
+    var database = await openDatabase(path, version: DATABASE_VERSION, onCreate: onCreate, singleInstance: true,);
+    return database;
+  }
+
+
+ 
+
   late WorkoutTable workoutTable ;
   late StravaAuthTable stravaAuthTable ;
 
@@ -33,6 +57,8 @@ class DatabaseHandler {
    void onUpgrade(Database db, int oldVersion, int newVersion) {
     workoutTable.upgradeTable(db, oldVersion, newVersion);
   }
+  
+
 }
 
 class WorkoutTable {
