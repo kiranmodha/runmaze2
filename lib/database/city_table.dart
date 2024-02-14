@@ -1,6 +1,6 @@
 import 'package:sqflite/sqflite.dart';
 
-import '../models/city.dart'; // Assuming the City model is in a models directory
+import '../model/city.dart'; // Assuming the City model is in a models directory
 
 class CityTable {
   static const String TABLE_NAME = 'city_master';
@@ -18,7 +18,6 @@ class CityTable {
       '$COL_NAME TEXT'
       ')',
     );
-    print('Table created: $created');
   }
 
   Future<void> deleteAllRecords() async {

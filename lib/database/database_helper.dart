@@ -2,7 +2,7 @@ import 'package:flutter_application_1/model/workout.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
-class DatabaseHandler {
+class DatabaseHelper {
   static const String DATABASE_NAME = "runmaze.db";
   static const int DATABASE_VERSION = 2;
 
@@ -33,7 +33,7 @@ class DatabaseHandler {
   late WorkoutTable workoutTable ;
   late StravaAuthTable stravaAuthTable ;
 
-  DatabaseHandler() {
+  DatabaseHelper() {
     workoutTable = WorkoutTable(this);
     stravaAuthTable = StravaAuthTable(this);
   }
@@ -72,7 +72,7 @@ class WorkoutTable {
   static const String COL_DURATION_SS = "duration_ss";
   static const String COL_LINK = "link";
 
-  final DatabaseHandler dbHandler;
+  final DatabaseHelper dbHandler;
 
   WorkoutTable(this.dbHandler);
 
@@ -131,13 +131,27 @@ class WorkoutTable {
   Future<int> getNumberOfActivities() async {
     Database db = await dbHandler.database;
     var result = await db.rawQuery("SELECT COUNT(*) FROM $TABLE_WORKOUT");
-    return Sqflite.firstIntValue(result);
+    return Sqflite.firstIntValue(result) ?? 0;
   }
 
+  // Future<double?> getTotalDistance() async {
+  //   Database db = await dbHandler.database;
+  //   var result = await db.rawQuery("SELECT SUM($COL_DISTANCE) FROM $TABLE_WORKOUT");
+  //   return Sqflite.firstDoubleValue(result);
+  // }
+
   Future<double> getTotalDistance() async {
-    Database db = await dbHandler.database;
-    var result = await db.rawQuery("SELECT SUM($COL_DISTANCE) FROM $TABLE_WORKOUT");
-    return Sqflite.firstDoubleValue(result);
+      Database db = await dbHandler.database;
+
+      // Use a parameterized query to prevent SQL injection vulnerabilities
+      String sql = "SELECT SUM($COL_DISTANCE) as total_distance FROM $TABLE_WORKOUT";
+      List<Map<String, dynamic>> queryResponse = await db.rawQuery(sql);
+ 
+     
+      // Extract the first element (total distance) and handle null scenarios
+      double totalDistance = queryResponse.isNotEmpty ? queryResponse[0]['total_distance'] : 0.0;
+
+      return totalDistance;
   }
 
   Future<List<MonthDistance>> getMonthlyDistance() async {
@@ -192,6 +206,9 @@ class WorkoutTable {
     return arrayList;
   }
 
+
+
+
   Future<Workout> getWorkout(int id) async {
     Database db = await dbHandler.database;
     var result = await db.query(TABLE_WORKOUT,
@@ -212,13 +229,15 @@ class WorkoutTable {
     return null;
   }
 
-  class MonthDistance {
+
+}
+
+class MonthDistance {
     String Month;
     String Year;
     double Distance;
 
     MonthDistance(this.Month, this.Year, this.Distance);
-  }
 }
 
 class StravaAuthTable {
@@ -228,7 +247,7 @@ class StravaAuthTable {
   static final String COL_EXPIRES_AT = "expires_at";
   static final String COL_REFRESH_TOKEN = "refresh_token";
 
-  final DatabaseHandler dbHandler;
+  final DatabaseHelper dbHandler;
 
   StravaAuthTable(this.dbHandler);
 

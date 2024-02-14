@@ -75,4 +75,32 @@ class StravaAuth {
         'clientId: $clientId, '
         'clientSecret: ***'; // Hide client secret
   }
+
+
+  // fromMap function
+  factory StravaAuth.fromMap(Map<String, dynamic> map) {
+    return StravaAuth(
+      athleteId: map['athlete_id'] as int,
+      accessToken: map['access_token'] as String,
+      expiresAt: map['expires_at'] != null
+          ? DateTime.fromMillisecondsSinceEpoch(map['expires_at'] as int)
+          : null,
+      refreshToken: map['refresh_token'] as String,
+      clientId: map['client_id'] as int,
+      clientSecret: map['client_secret'] as String,
+    );
+  }
+
+
+
+  Map<String, dynamic> toMap() {
+    return {
+      'athlete_id': athleteId,
+      'access_token': accessToken,
+      'expires_at': expiresAt?.millisecondsSinceEpoch,
+      'refresh_token': refreshToken,
+      'client_id': clientId,
+      'client_secret': clientSecret,
+    };
+  }
 }

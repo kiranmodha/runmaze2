@@ -28,4 +28,19 @@ class City {
 
   @override
   int get hashCode => id.hashCode ^ name.hashCode;
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'name': name,
+    };
+  }
+
+
+  factory City.fromMap(Map<String, dynamic> map) {
+    return City(
+      map['id'],
+      map['name'],
+    );
+  }
 }
