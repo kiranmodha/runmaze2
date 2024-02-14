@@ -1,317 +1,126 @@
-import 'package:flutter_application_1/model/workout.dart';
+// import 'package:flutter_application_1/database/stravaauth_table.dart';
+// import 'package:flutter_application_1/database/workout_table.dart';
+// import 'package:flutter_application_1/model/workout.dart';
+// import 'package:sqflite/sqflite.dart';
+// import 'package:path/path.dart';
+
+// class DatabaseHelper {
+//   static const String DATABASE_NAME = "runmaze.db";
+//   static const int DATABASE_VERSION = 2;
+
+//   Database? _database;
+
+//   Future<Database> get database async {
+//     _database ??= await _initialize(); //If _database is null then initialize it
+//     return _database!;
+//   }
+
+//   Future<String> get fullPath async {
+//     final path = await getDatabasesPath();
+//     return join(path, DATABASE_NAME);
+//   }
+
+//   Future<Database> _initialize() async {
+//     final path = await fullPath;
+//     var database = await openDatabase(
+//       path,
+//       version: DATABASE_VERSION,
+//       onCreate: onCreate,
+//       singleInstance: true,
+//     );
+//     return database;
+//   }
+
+//   late WorkoutTable workoutTable;
+//   late StravaAuthTable stravaAuthTable;
+
+//   DatabaseHelper() {
+//     workoutTable = WorkoutTable(this);
+//     stravaAuthTable = StravaAuthTable(this);
+//   }
+
+//   Future<Database> db() async {
+//     return openDatabase(
+//       DATABASE_NAME,
+//       version: DATABASE_VERSION,
+//       onCreate: onCreate,
+//       onUpgrade: onUpgrade,
+//     );
+//   }
+
+//   void onCreate(Database db, int version) {
+//     workoutTable.createTable(db);
+//     stravaAuthTable.createTable(db);
+//   }
+
+//   void onUpgrade(Database db, int oldVersion, int newVersion) {
+//     workoutTable.upgradeTable(db, oldVersion, newVersion);
+//   }
+// }
+
 import 'package:sqflite/sqflite.dart';
-import 'package:path/path.dart';
+import 'package:runmaze2/database/workout_table.dart';
 
-class DatabaseHelper {
-  static const String DATABASE_NAME = "runmaze.db";
-  static const int DATABASE_VERSION = 2;
+class DatabaseHandler {
+  static const databaseName = 'runmaze.db';
+  static const databaseVersion = 4;
 
-  Database? _database;
+  static Database? _database;
 
+  DatabaseHandler._internal();
+
+  static DatabaseHandler instance = DatabaseHandler._internal();
 
   Future<Database> get database async {
-    _database ??= await _initialize();  //If _database is null then initialize it
-     return _database!;
-  }
+    if (_database != null) return _database!;
 
-
-  Future<String> get fullPath async {
-    final path = await getDatabasesPath();
-    return join(path, DATABASE_NAME);
-  }
-
-
-  Future<Database> _initialize() async {
-    final path = await fullPath;
-    var database = await openDatabase(path, version: DATABASE_VERSION, onCreate: onCreate, singleInstance: true,);
-    return database;
-  }
-
-
- 
-
-  late WorkoutTable workoutTable ;
-  late StravaAuthTable stravaAuthTable ;
-
-  DatabaseHelper() {
-    workoutTable = WorkoutTable(this);
-    stravaAuthTable = StravaAuthTable(this);
-  }
-
-  Future<Database> db() async {
-    return openDatabase(
-      DATABASE_NAME,
-      version: DATABASE_VERSION,
-      onCreate: onCreate,
-      onUpgrade: onUpgrade,
+    _database = await openDatabase(
+      databaseName,
+      version: databaseVersion,
+      onCreate: _onCreate,
+      onUpgrade: _onUpgrade,
     );
+
+    return _database!;
   }
 
-  
-  void onCreate(Database db, int version) {
-    workoutTable.createTable(db);
-    stravaAuthTable.createTable(db);
+  Future _onCreate(Database db, int version) async {
+    // await db.execute('''
+    //   CREATE TABLE workouts (
+    //     id INTEGER PRIMARY KEY AUTOINCREMENT,
+    //     -- Add other workout fields here
+    //   )
+    // ''');
 
-  }
-  
-   void onUpgrade(Database db, int oldVersion, int newVersion) {
-    workoutTable.upgradeTable(db, oldVersion, newVersion);
-  }
-  
+    await WorkoutTable.createTable(db);
 
+    // Create other tables (stravaAuth, athlete, version, etc.) using a similar approach
+
+    await createTempDayTable(db);
+  }
+
+  Future _onUpgrade(Database db, int oldVersion, int newVersion) async {
+    if (oldVersion == 1 && newVersion == 2) {
+      await createTempDayTable(db);
+    }
+
+    if (newVersion == 4) {
+      // Handle leaderboard table upgrade here
+      leaderboardTable.upgradeTable(db, oldVersion, newVersion);
+    }
+  }
+
+  Future createTempDayTable(Database db) async {
+    await db.execute('''
+      CREATE TABLE days (
+        day INTEGER PRIMARY KEY
+      )
+    ''');
+
+    for (int i = 1; i <= 31; i++) {
+      await db.insert('days', {'day': i});
+    }
+  }
+
+  // Define other table-related methods as needed
 }
-
-class WorkoutTable {
-  static const String TABLE_WORKOUT = "workout";
-  static const String COL_WORKOUT_DATE = "workout_date";
-  static const String COL_ID = "id";
-  static const String COL_DISTANCE = "distance";
-  static const String COL_ACTIVITY_TYPE = "activity_type";
-  static const String COL_DURATION_HH = "duration_hh";
-  static const String COL_DURATION_MM = "duration_mm";
-  static const String COL_DURATION_SS = "duration_ss";
-  static const String COL_LINK = "link";
-
-  final DatabaseHelper dbHandler;
-
-  WorkoutTable(this.dbHandler);
-
-  void createTable(Database db) {
-    String CREATE_WORKOUT_TABLE = "CREATE TABLE $TABLE_WORKOUT ("
-        "$COL_ID INTEGER PRIMARY KEY AUTOINCREMENT, "
-        "$COL_WORKOUT_DATE TEXT, "
-        "$COL_ACTIVITY_TYPE TEXT, "
-        "$COL_DISTANCE REAL, "
-        "$COL_DURATION_HH INTEGER, "
-        "$COL_DURATION_MM INTEGER, "
-        "$COL_DURATION_SS INTEGER, "
-        "$COL_LINK TEXT)";
-    db.execute(CREATE_WORKOUT_TABLE);
-  }
-
-  void upgradeTable(Database db, int oldVersion, int newVersion) {
-    db.execute("DROP TABLE IF EXISTS $TABLE_WORKOUT");
-    createTable(db);
-  }
-
-  void addWorkout(Workout workout) async {
-    Database db = await dbHandler.db();
-    var values = {
-      COL_WORKOUT_DATE: workout.getDateTime(),
-      COL_DISTANCE: workout.getDistance(),
-      COL_ACTIVITY_TYPE: workout.getActivityType(),
-      COL_DURATION_HH: workout.getHH(),
-      COL_DURATION_MM: workout.getMM(),
-      COL_DURATION_SS: workout.getSS(),
-      COL_LINK: workout.getLink(),
-    };
-    db.insert(TABLE_WORKOUT, values);
-  }
-
-  void updateWorkout(Workout workout) async {
-    Database db = await dbHandler.database;
-    var values = {
-      COL_WORKOUT_DATE: workout.getDateTime(),
-      COL_DISTANCE: workout.getDistance(),
-      COL_ACTIVITY_TYPE: workout.getActivityType(),
-      COL_DURATION_HH: workout.getHH(),
-      COL_DURATION_MM: workout.getMM(),
-      COL_DURATION_SS: workout.getSS(),
-      COL_LINK: workout.getLink(),
-    };
-    db.update(TABLE_WORKOUT, values,
-        where: "$COL_ID = ?", whereArgs: [workout.getId()]);
-  }
-
-  void deleteWorkout(int id) async {
-    Database db = await dbHandler.database;
-    db.delete(TABLE_WORKOUT, where: "$COL_ID = ?", whereArgs: [id]);
-  }
-
-  Future<int> getNumberOfActivities() async {
-    Database db = await dbHandler.database;
-    var result = await db.rawQuery("SELECT COUNT(*) FROM $TABLE_WORKOUT");
-    return Sqflite.firstIntValue(result) ?? 0;
-  }
-
-  // Future<double?> getTotalDistance() async {
-  //   Database db = await dbHandler.database;
-  //   var result = await db.rawQuery("SELECT SUM($COL_DISTANCE) FROM $TABLE_WORKOUT");
-  //   return Sqflite.firstDoubleValue(result);
-  // }
-
-  Future<double> getTotalDistance() async {
-      Database db = await dbHandler.database;
-
-      // Use a parameterized query to prevent SQL injection vulnerabilities
-      String sql = "SELECT SUM($COL_DISTANCE) as total_distance FROM $TABLE_WORKOUT";
-      List<Map<String, dynamic>> queryResponse = await db.rawQuery(sql);
- 
-     
-      // Extract the first element (total distance) and handle null scenarios
-      double totalDistance = queryResponse.isNotEmpty ? queryResponse[0]['total_distance'] : 0.0;
-
-      return totalDistance;
-  }
-
-  Future<List<MonthDistance>> getMonthlyDistance() async {
-    Database db = await dbHandler.database;
-    var result = await db.rawQuery(
-        "SELECT SUM($COL_DISTANCE) distance, "
-        "strftime('%Y-%m', $COL_WORKOUT_DATE) year_month, "
-        "strftime('%Y', $COL_WORKOUT_DATE) year, "
-        "strftime('%m', $COL_WORKOUT_DATE) month "
-        "FROM $TABLE_WORKOUT "
-        "GROUP BY year_month "
-        "ORDER BY year_month");
-    List<MonthDistance> arrayList = [];
-    for (var row in result) {
-      arrayList.add(MonthDistance(row['month'], row['year'], row['distance']));
-    }
-    return arrayList;
-  }
-
-  Future<String> getTotalHoursMinutes() async {
-    Database db = await dbHandler.database;
-    var result = await db.rawQuery(
-        "SELECT SUM($COL_DURATION_HH) AS HOURS, "
-        "SUM($COL_DURATION_MM) AS MINUTES, "
-        "SUM($COL_DURATION_SS) AS SECONDS "
-        "FROM $TABLE_WORKOUT");
-    var sumHours = result.first['HOURS'];
-    var sumMinutes = result.first['MINUTES'];
-    var sumSeconds = result.first['SECONDS'];
-    sumMinutes += (sumSeconds / 60).floor();
-    sumHours += (sumMinutes / 60).floor();
-    sumMinutes %= 60;
-    return "$sumHours h $sumMinutes min";
-  }
-
-  Future<List<Workout>> getWorkouts() async {
-    List<Workout> arrayList = [];
-    Database db = await dbHandler.database;
-    var result = await db.query(TABLE_WORKOUT);
-    for (var row in result) {
-      Workout workout = Workout();
-      workout.setId(row[COL_ID]);
-      workout.setDatetime(row[COL_WORKOUT_DATE]);
-      workout.setActivityType(row[COL_ACTIVITY_TYPE]);
-      workout.setDistance(row[COL_DISTANCE]);
-      workout.setHH(row[COL_DURATION_HH]);
-      workout.setMM(row[COL_DURATION_MM]);
-      workout.setSS(row[COL_DURATION_SS]);
-      workout.setLink(row[COL_LINK]);
-      arrayList.add(workout);
-    }
-    return arrayList;
-  }
-
-
-
-
-  Future<Workout> getWorkout(int id) async {
-    Database db = await dbHandler.database;
-    var result = await db.query(TABLE_WORKOUT,
-        where: "$COL_ID = ?", whereArgs: [id]);
-    if (result.isNotEmpty) {
-      var row = result.first;
-      Workout workout = Workout();
-      workout.setId(row[COL_ID]);
-      workout.setDatetime(row[COL_WORKOUT_DATE]);
-      workout.setActivityType(row[COL_ACTIVITY_TYPE]);
-      workout.setDistance(row[COL_DISTANCE]);
-      workout.setHH(row[COL_DURATION_HH]);
-      workout.setMM(row[COL_DURATION_MM]);
-      workout.setSS(row[COL_DURATION_SS]);
-      workout.setLink(row[COL_LINK]);
-      return workout;
-    }
-    return null;
-  }
-
-
-}
-
-class MonthDistance {
-    String Month;
-    String Year;
-    double Distance;
-
-    MonthDistance(this.Month, this.Year, this.Distance);
-}
-
-class StravaAuthTable {
-  static final String TABLE_STRAVA_AUTH = "strava_auth";
-  static final String COL_ATHLETE_ID = "athlete_id";
-  static final String COL_ACCESS_TOKEN = "access_token";
-  static final String COL_EXPIRES_AT = "expires_at";
-  static final String COL_REFRESH_TOKEN = "refresh_token";
-
-  final DatabaseHelper dbHandler;
-
-  StravaAuthTable(this.dbHandler);
-
-  void createTable(Database db) {
-    String CREATE_STRAVA_AUTH_TABLE = "CREATE TABLE $TABLE_STRAVA_AUTH ("
-        "$COL_ATHLETE_ID INTEGER PRIMARY KEY, "
-        "$COL_ACCESS_TOKEN TEXT, "
-        "$COL_EXPIRES_AT INTEGER, "
-        "$COL_REFRESH_TOKEN TEXT)";
-    db.execute(CREATE_STRAVA_AUTH_TABLE);
-  }
-
-  void upgradeTable(Database db, int oldVersion, int newVersion) {
-    db.execute("DROP TABLE IF EXISTS $TABLE_STRAVA_AUTH");
-    createTable(db);
-  }
-
-  void addOrUpdateStravaAuth(StravaAuth stravaAuth) async {
-    Database db = await dbHandler.database;
-    var result = await db.query(TABLE_STRAVA_AUTH,
-        where: "$COL_ATHLETE_ID = ?", whereArgs: [stravaAuth.getAthlete_id()]);
-    if (result.isNotEmpty) {
-      updateStravaAuth(stravaAuth);
-    } else {
-      addStravaAuth(stravaAuth);
-    }
-  }
-
-  void addStravaAuth(StravaAuth stravaAuth) async {
-    Database db = await dbHandler.database;
-    var values = {
-      COL_ATHLETE_ID: stravaAuth.getAthlete_id(),
-      COL_ACCESS_TOKEN: stravaAuth.getAccess_token(),
-      COL_EXPIRES_AT: stravaAuth.getExpires_at(),
-      COL_REFRESH_TOKEN: stravaAuth.getRefresh_token(),
-    };
-    db.insert(TABLE_STRAVA_AUTH, values);
-  }
-
-  void updateStravaAuth(StravaAuth stravaAuth) async {
-    Database db = await dbHandler.database;
-    var values = {
-      COL_ACCESS_TOKEN: stravaAuth.getAccess_token(),
-      COL_EXPIRES_AT: stravaAuth.getExpires_at(),
-      COL_REFRESH_TOKEN: stravaAuth.getRefresh_token(),
-    };
-    db.update(TABLE_STRAVA_AUTH, values,
-        where: "$COL_ATHLETE_ID = ?", whereArgs: [stravaAuth.getAthlete_id()]);
-  }
-
-  Future<StravaAuth> getStravaAuth() async {
-    Database db = await dbHandler.database;
-    var result = await db.query(TABLE_STRAVA_AUTH);
-    if (result.isNotEmpty) {
-      var row = result.first;
-      StravaAuth stravaAuth = StravaAuth();
-      stravaAuth.setAthlete_id(row[COL_ATHLETE_ID]);
-      stravaAuth.setAccess_token(row[COL_ACCESS_TOKEN]);
-      stravaAuth.setExpires_at(row[COL_EXPIRES_AT]);
-      stravaAuth.setRefresh_token(row[COL_REFRESH_TOKEN]);
-      return stravaAuth;
-    }
-    return null;
-  }
-}
-
-
