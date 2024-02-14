@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'strava_auth.dart';
 
 class Athlete {
@@ -43,43 +42,11 @@ class Athlete {
   StravaAuth getStravaAuth() => stravaAuth;
   int getRemoteUpdate() => remoteUpdate;
 
-  // toJson method
-  // Map<String, dynamic> toJson() => {
-  //       "id": id,
-  //       "name": name,
-  //       "email": email,
-  //       "password": password,
-  //       "gender": gender,
-  //       "birthdate": birthdate,
-  //       "city": city,
-  //       "club": club,
-  //       "company": company,
-  //       "strava_athlete_id": stravaAuth.athleteId,
-  //       "access_token": stravaAuth.accessToken,
-  //       "expires_at": stravaAuth.expiresAt,
-  //       "refresh_token": stravaAuth.refreshToken,
-  //     };
-
 // Modified toJson method to include excludeSensitive flag
-Map<String, dynamic> toJson({bool excludeSensitive = false}) {
-  if (excludeSensitive) {
+  Map<String, dynamic> toJson() {
     return {
       "id": id,
-      "name": name,
-      "gender": gender,
-      "birthdate": birthdate,
-      "city": city,
-      "club": club,
-      "company": company,
-      "strava_athlete_id": stravaAuth.athleteId,
-      "access_token": stravaAuth.accessToken,
-      "expires_at": stravaAuth.expiresAt,
-      "refresh_token": stravaAuth.refreshToken,
-    };
-  } else {
-    return {
-      "id": id,
-      "name": name,
+      "athlete_name": name,
       "email": email,
       "password": password,
       "gender": gender,
@@ -91,10 +58,11 @@ Map<String, dynamic> toJson({bool excludeSensitive = false}) {
       "access_token": stravaAuth.accessToken,
       "expires_at": stravaAuth.expiresAt,
       "refresh_token": stravaAuth.refreshToken,
+      "client_id": stravaAuth.clientId,
+      "client_secret": stravaAuth.clientSecret,
+      "remote_update": remoteUpdate,
     };
   }
-}
-
 
   // toString method
   @override
@@ -113,57 +81,44 @@ Map<String, dynamic> toJson({bool excludeSensitive = false}) {
         'remoteUpdate: $remoteUpdate}';
   }
 
-  // Factory constructor from json
-  // factory Athlete.fromJson(Map<String, dynamic> json) => Athlete(
-  //       id: json['id'] as int,
-  //       name: json['name'] as String,
-  //       email: json['email'] as String,
-  //       password: json['password'] as String,
-  //       gender: json['gender'] as String,
-  //       birthdate: json['birthdate'] as String,
-  //       city: json['city'] as int,
-  //       club: json['club'] as int,
-  //       company: json['company'] as int,
-  //       stravaAuth: StravaAuth.fromJson(json['strava_auth'] as Map<String, dynamic>),
-  //       remoteUpdate: json['remote_update'] as int,
-  //     );
 
 // Factory constructor from json
-  factory Athlete.fromJson(Map<String, dynamic> json, {bool includeSensitive = false}) => Athlete(
+  factory Athlete.fromJson(Map<String, dynamic> json,
+          {bool includeSensitive = false}) =>
+      Athlete(
         id: json['id'] as int,
         name: json['name'] as String,
-        email: includeSensitive ? json['email'] as String :"******",
+        email: includeSensitive ? json['email'] as String : "******",
         password: includeSensitive ? json['password'] as String : "******",
         gender: json['gender'] as String,
         birthdate: json['birthdate'] as String,
         city: json['city'] as int,
         club: json['club'] as int,
         company: json['company'] as int,
-        stravaAuth: StravaAuth.fromJson(json['strava_auth'] as Map<String, dynamic>),
+        stravaAuth:
+            StravaAuth.fromJson(json['strava_auth'] as Map<String, dynamic>),
         remoteUpdate: json['remote_update'] as int,
       );
 
-
-
 // Function to create an Athlete object from a map
-factory Athlete.fromMap(Map<String, dynamic> map) {
-  return Athlete(
-    id: map['id'] as int,
-    name: map['name'] as String,
-    email: map['email'] as String,
-    password: map['password'] as String,
-    gender: map['gender'] as String,
-    birthdate: map['birthdate'] as String,
-    city: map['city'] as int,
-    club: map['club'] as int,
-    company: map['company'] as int,
-    stravaAuth: StravaAuth.fromMap(map['strava_auth'] as Map<String, dynamic>),
-    remoteUpdate: map['remote_update'] as int,
-  );
-}
+  factory Athlete.fromMap(Map<String, dynamic> map) {
+    return Athlete(
+      id: map['id'] as int,
+      name: map['name'] as String,
+      email: map['email'] as String,
+      password: map['password'] as String,
+      gender: map['gender'] as String,
+      birthdate: map['birthdate'] as String,
+      city: map['city'] as int,
+      club: map['club'] as int,
+      company: map['company'] as int,
+      stravaAuth:
+          StravaAuth.fromMap(map['strava_auth'] as Map<String, dynamic>),
+      remoteUpdate: map['remote_update'] as int,
+    );
+  }
 
-
-Map<String, dynamic> toMap() {
+  Map<String, dynamic> toMap() {
     return {
       'id': id,
       'name': name,
@@ -181,5 +136,5 @@ Map<String, dynamic> toMap() {
 
 }
 
-// Assuming StravaAuth class definition elsewhere
+
 
