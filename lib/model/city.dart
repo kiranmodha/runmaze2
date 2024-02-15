@@ -32,7 +32,7 @@ class City {
   Map<String, dynamic> toMap() {
     return {
       'id': id,
-      'name': name,
+      'city_name': name,
     };
   }
 
@@ -40,7 +40,7 @@ class City {
   factory City.fromMap(Map<String, dynamic> map) {
     return City(
       map['id'],
-      map['name'],
+      map['city_name'],
     );
   }
 }

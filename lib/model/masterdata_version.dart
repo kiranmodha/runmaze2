@@ -4,16 +4,16 @@ class MasterDataVersion {
   final double versionNumber;
 
   // Constructor
-  MasterDataVersion({
-    required this.masterData,
-    required this.versionNumber,
-  });
+  MasterDataVersion( 
+      this.masterData,
+      this.versionNumber, 
+);
 
   // Constructor with defaults
-  factory MasterDataVersion.empty() => MasterDataVersion(
-        masterData: "",
-        versionNumber: 0.0,
-      );
+  // factory MasterDataVersion.empty() => MasterDataVersion(
+  //       masterData: "",
+  //       versionNumber: 0.0,
+  //     );
 
   // Getters
   String get getMasterData => masterData;
@@ -24,4 +24,19 @@ class MasterDataVersion {
   String toString() {
     return 'MasterDataVersion{masterData: $masterData, versionNumber: $versionNumber}';
   }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'master_data': masterData,
+      'version_number': versionNumber,
+    };
+  }
+
+  factory MasterDataVersion.fromMap(Map<String, dynamic> map) {
+    return MasterDataVersion(
+       map['master_data'],
+       map['version_number'],
+    );
+  }
+
 }

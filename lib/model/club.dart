@@ -19,11 +19,23 @@ class Club {
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
 
-    return other is Club &&
-           other.id == id &&
-           other.name == name;
+    return other is Club && other.id == id && other.name == name;
   }
 
   @override
   int get hashCode => id.hashCode ^ name.hashCode;
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'club_name': name,
+    };
+  }
+
+  factory Club.fromMap(Map<String, dynamic> map) {
+    return Club(
+      map['id'],
+      map['club_name'],
+    );
+  }
 }

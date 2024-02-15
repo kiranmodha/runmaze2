@@ -19,11 +19,23 @@ class Company {
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
 
-    return other is Company &&
-           other.id == id &&
-           other.name == name;
+    return other is Company && other.id == id && other.name == name;
   }
 
   @override
   int get hashCode => id.hashCode ^ name.hashCode;
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'company_name': name,
+    };
+  }
+
+  factory Company.fromMap(Map<String, dynamic> map) {
+    return Company(
+      map['id'],
+      map['company_name'],
+    );
+  }
 }
