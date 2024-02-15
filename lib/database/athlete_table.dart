@@ -1,141 +1,53 @@
 // import 'package:sqflite/sqflite.dart';
 
- import '../model/athlete.dart';
- import '../model/strava_auth.dart';
- import 'database_helper.dart';
-
-
-// class AthleteTable {
-//   static const String TABLE_NAME = 'athlete';
-//   static const String COL_ID = 'id';
-//   static const String COL_EMAIL = 'email';
-//   static const String COL_PASSWORD = 'password';
-//   static const String COL_NAME = 'athlete_name';
-//   static const String COL_GENDER = 'gender';
-//   static const String COL_BIRTHDATE = 'birthdate';
-//   static const String COL_CITY = 'city';
-//   static const String COL_CLUB = 'club';
-//   static const String COL_COMPANY = 'company';
-//   static const String COL_STRAVA_ATHLETE_ID = 'strava_athlete_id';
-//   static const String COL_ACCESS_TOKEN = 'access_token';
-//   static const String COL_EXPIRES_AT = 'expires_at';
-//   static const String COL_REFRESH_TOKEN = 'refresh_token';
-//   static const String COL_CLIENT_ID = 'client_id';
-//   static const String COL_CLIENT_SECRET = 'client_secret';
-//   static const String COL_REMOTE_UPDATE = 'remote_update';
-
-//   final Database db;
-
-//   AthleteTable(this.db);
-
-//   Future<void> createTableIfNotExists() async {
-//     final created = await db.execute('CREATE TABLE IF NOT EXISTS $TABLE_NAME ('
-//         '$COL_ID INTEGER PRIMARY KEY, '
-//         '$COL_EMAIL TEXT, '
-//         '$COL_PASSWORD TEXT, '
-//         '$COL_NAME TEXT, '
-//         '$COL_GENDER TEXT, '
-//         '$COL_BIRTHDATE TEXT, '
-//         '$COL_CITY INTEGER, '
-//         '$COL_CLUB INTEGER, '
-//         '$COL_COMPANY INTEGER, '
-//         '$COL_STRAVA_ATHLETE_ID INTEGER, '
-//         '$COL_ACCESS_TOKEN TEXT, '
-//         '$COL_EXPIRES_AT INTEGER, '
-//         '$COL_REFRESH_TOKEN TEXT, '
-//         '$COL_CLIENT_ID INTEGER, '
-//         '$COL_CLIENT_SECRET TEXT, '
-//         '$COL_REMOTE_UPDATE INTEGER )');
-//   }
-
-//   Future<void> deleteAllRecords() async {
-//     final deletedCount = await db.delete(TABLE_NAME);
-//     print('Deleted $deletedCount records');
-//   }
-
-//   Future<void> addAthlete(Athlete athlete) async {
-//     final insertedId = await db.insert(
-//       TABLE_NAME,
-//       athlete.toMap(),
-//       conflictAlgorithm: ConflictAlgorithm.replace,
-//     );
-//     print('Inserted row with ID: $insertedId');
-//   }
-
-//   Future<Athlete?> login(String email, String password) async {
-//     final maps = await db.query(
-//       TABLE_NAME,
-//       where: '$COL_EMAIL = ? AND $COL_PASSWORD = ?',
-//       whereArgs: [email, password],
-//     );
-
-//     if (maps.isNotEmpty) {
-//       return Athlete.fromMap(maps.first);
-//     } else {
-//       return null;
-//     }
-//   }
-
-//   Future<Athlete?> athleteByID(int id) async {
-//     final maps = await db.query(
-//       TABLE_NAME,
-//       where: '$COL_ID = ?',
-//       whereArgs: [id],
-//     );
-
-//     if (maps.isNotEmpty) {
-//       return Athlete.fromMap(maps.first);
-//     } else {
-//       return null;
-//     }
-//   }
-
-
-//   // ... other methods (similarly translated)
-// }
-
+import '../model/athlete.dart';
+import '../model/strava_auth.dart';
+import 'database_helper.dart';
 
 import 'package:sqflite/sqflite.dart';
 
 class AthleteTable {
-
-  static const String TABLE_NAME = 'athlete';
-  static const String COL_ID = 'id';
-  static const String COL_EMAIL = 'email';
-  static const String COL_PASSWORD = 'password';
-  static const String COL_NAME = 'athlete_name';
-  static const String COL_GENDER = 'gender';
-  static const String COL_BIRTHDATE = 'birthdate';
-  static const String COL_CITY = 'city';
-  static const String COL_CLUB = 'club';
-  static const String COL_COMPANY = 'company';
-  static const String COL_STRAVA_ATHLETE_ID = 'strava_athlete_id';
-  static const String COL_ACCESS_TOKEN = 'access_token';
-  static const String COL_EXPIRES_AT = 'expires_at';
-  static const String COL_REFRESH_TOKEN = 'refresh_token';
-  static const String COL_CLIENT_ID = 'client_id';
-  static const String COL_CLIENT_SECRET = 'client_secret';
-  static const String COL_REMOTE_UPDATE = 'remote_update';
+  static const String tableName = 'athlete';
+  static const String fieldId = 'id';
+  static const String fieldEmail = 'email';
+  static const String fieldPassword = 'password';
+  static const String fieldName = 'athlete_name';
+  static const String fieldGender = 'gender';
+  static const String fieldBirthdate = 'birthdate';
+  static const String fieldCity = 'city';
+  static const String fieldClub = 'club';
+  static const String fieldCompany = 'company';
+  static const String fieldStravaAthleteId = 'strava_athlete_id';
+  static const String fieldAccessToken = 'access_token';
+  static const String fieldExpiresAt = 'expires_at';
+  static const String fieldRefreshToken = 'refresh_token';
+  static const String fieldCliendId = 'client_id';
+  static const String fieldClientSecret = 'client_secret';
+  static const String fieldRemoteUpdate = 'remote_update';
 
   final DatabaseHelper dbHelper;
 
   AthleteTable(this.dbHelper);
 
-  Future<void> createTable(Database db) async {
+  static Future<void> createTable(Database db) async {
     String createTableSql = '''
-      CREATE TABLE $TABLE_NAME (
-        $COL_ID INTEGER PRIMARY KEY,
-        $COL_EMAIL TEXT UNIQUE CHECK (LENGTH($COL_EMAIL) > 0),
-        $COL_PASSWORD TEXT CHECK (LENGTH($COL_PASSWORD) > 0),
-        $COL_NAME TEXT NOT NULL,
-        $COL_GENDER TEXT NOT NULL,
-        $COL_BIRTHDATE TEXT NOT NULL,
-        $COL_CITY INTEGER,
-        $COL_CLUB INTEGER,
-        $COL_COMPANY INTEGER,
-        $COL_REMOTE_UPDATE INTEGER,
-        // Store only athlete ID from StravaAuth to avoid sensitive data leakage
-        $COL_STRAVA_ATHLETE_ID INTEGER
+      CREATE TABLE $tableName (
+        $fieldId INTEGER PRIMARY KEY,
+        $fieldEmail TEXT UNIQUE CHECK (LENGTH($fieldEmail) > 0),
+        $fieldPassword TEXT CHECK (LENGTH($fieldPassword) > 0),
+        $fieldName TEXT NOT NULL,
+        $fieldGender TEXT NOT NULL,
+        $fieldBirthdate TEXT NOT NULL,
+        $fieldCity INTEGER,
+        $fieldClub INTEGER,
+        $fieldCompany INTEGER,
+        $fieldRemoteUpdate INTEGER,
+        $fieldAccessToken  TEXT, 
+        $fieldExpiresAt INTEGER, 
+        $fieldRefreshToken  TEXT,
+        $fieldCliendId  INTEGER, 
+        $fieldClientSecret  TEXT,  
+        $fieldStravaAthleteId INTEGER
       )
     ''';
     await db.execute(createTableSql);
@@ -143,38 +55,57 @@ class AthleteTable {
 
   Future<void> upgradeTable(Database db, int oldVersion, int newVersion) async {
     // Implement table upgrade logic if needed
+    db.execute("DROP TABLE IF EXISTS $tableName");
+    // Create table again
+    createTable(db);
   }
 
   Future<void> addAthlete(Athlete athlete) async {
     Database db = await dbHelper.database;
     await db.transaction((txn) async {
-      txn.insert(TABLE_NAME, athlete.toJson(excludeSensitive: true));
+      txn.insert(tableName, athlete.toJson());
     });
   }
 
   Future<void> updateAthlete(Athlete athlete) async {
     Database db = await dbHelper.database;
     await db.transaction((txn) async {
-      txn.update(TABLE_NAME, athlete.toJson(excludeSensitive: true),
-          where: '$COL_ID = ?', whereArgs: [athlete.id]);
+      txn.update(tableName, athlete.toJson(),
+          where: '$fieldId = ?', whereArgs: [athlete.id]);
     });
+  }
+
+  Future<void> updateRemoteUpdateStatus(Database db, Athlete athlete) async {
+    // Prepare values for update
+    final values = <String, dynamic>{};
+    values[fieldRemoteUpdate] =
+        athlete.remoteUpdate; // Assuming equivalent property
+
+    // Update the athlete record
+    final id = athlete.id;
+    await db.update(
+      tableName,
+      values,
+      where: '$fieldId = ?',
+      whereArgs: [id],
+    );
   }
 
   Future<Athlete?> login(String email, String password) async {
     Database db = await dbHelper.database;
     List<Map<String, dynamic>> results = await db.query(
-      TABLE_NAME,
-      where: '$COL_EMAIL = ? AND $COL_PASSWORD = ?',
+      tableName,
+      where: '$fieldEmail = ? AND $fieldPassword = ?',
       whereArgs: [email, password],
     );
     if (results.isEmpty) return null;
     return Athlete.fromJson(results[0], includeSensitive: true);
   }
 
-  Future<Athlete?> getById(int id) async {
+  Future<Athlete?> athleteById(int id) async {
     Database db = await dbHelper.database;
     List<Map<String, dynamic>> results =
-        await db.query(TABLE_NAME, where: '$COL_ID = ?', whereArgs: [id]);
+        await db.query(tableName, where: '$fieldId = ?', whereArgs: [id]);
     if (results.isEmpty) return null;
     return Athlete.fromJson(results[0], includeSensitive: true);
   }
@@ -182,22 +113,62 @@ class AthleteTable {
   Future<StravaAuth?> getStravaAuth(int id) async {
     Database db = await dbHelper.database;
     List<Map<String, dynamic>> results = await db.query(
-      TABLE_NAME,
+      tableName,
       columns: [
-        COL_STRAVA_ATHLETE_ID,
+        fieldStravaAthleteId,
+        fieldAccessToken,
+        fieldExpiresAt,
+        fieldRefreshToken,
+        fieldCliendId,
+        fieldClientSecret,
       ],
-      where: '$COL_ID = ? AND $COL_STRAVA_ATHLETE_ID > 0',
+      where: '$fieldId = ? AND $fieldStravaAthleteId > 0',
       whereArgs: [id],
     );
     if (results.isEmpty) return null;
     return StravaAuth.fromJson(results[0]);
   }
 
-  Future<void> deleteAll() async {
-    Database db = await dbHelper.database;
-    await db.delete(TABLE_NAME);
+  Future<void> updateStravaAuth(
+      Database db, StravaAuth stravaAuth, int id) async {
+    // Prepare values for update
+    final values = <String, dynamic>{};
+    values[fieldStravaAthleteId] =
+        stravaAuth.athleteId; // Assuming equivalent property
+    values[fieldAccessToken] = stravaAuth.accessToken;
+    values[fieldExpiresAt] = stravaAuth
+        .expiresAt; // Ensure proper Dart representation (e.g., DateTime)
+    values[fieldRefreshToken] = stravaAuth.refreshToken;
+    values[fieldCliendId] = stravaAuth.clientId;
+    values[fieldClientSecret] = stravaAuth
+        .clientSecret; // Consider security implications of storing this
+
+    // Update the athlete record
+    await db.update(
+      tableName,
+      values,
+      where: '$fieldId = ?',
+      whereArgs: [id],
+    );
   }
 
-  // Other methods as needed...
-}
+  Future<void> deleteAll() async {
+    Database db = await dbHelper.database;
+    await db.delete(tableName);
+  }
 
+  Future<void> updateStravaAuthForAthlete(Database db, Athlete athlete) async {
+    // Retrieve StravaAuth from Athlete
+    final stravaAuth = athlete.stravaAuth;
+
+    // Ensure non-null StravaAuth
+    if (stravaAuth != null) {
+      await updateStravaAuth(db, stravaAuth, athlete.id);
+    } else {
+      // Handle case where there's no StravaAuth associated with the athlete
+      print('Athlete ID ${athlete.id} has no Strava authorization data.');
+    }
+  }
+
+
+}
