@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/model/workout.dart';
+import 'package:runmaze2/model/workout.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'dart:convert';
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

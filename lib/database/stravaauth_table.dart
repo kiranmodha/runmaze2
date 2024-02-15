@@ -1,32 +1,36 @@
+import 'package:runmaze2/database/database_helper.dart';
+import 'package:runmaze2/model/strava_auth.dart';
+import 'package:sqflite/sqflite.dart';
+
 class StravaAuthTable {
-  static final String TABLE_STRAVA_AUTH = "strava_auth";
-  static final String COL_ATHLETE_ID = "athlete_id";
-  static final String COL_ACCESS_TOKEN = "access_token";
-  static final String COL_EXPIRES_AT = "expires_at";
-  static final String COL_REFRESH_TOKEN = "refresh_token";
+  static const String tableName = "strava_auth";
+  static const String fieldAthleteId = "athlete_id";
+  static const String fieldAccessToken = "access_token";
+  static const String fieldExpiresAt = "expires_at";
+  static const String fieldRefreshToken = "refresh_token";
 
-  final DatabaseHelper dbHandler;
+  final DatabaseHelper dbHelper;
 
-  StravaAuthTable(this.dbHandler);
+  StravaAuthTable(this.dbHelper);
 
   void createTable(Database db) {
-    String CREATE_STRAVA_AUTH_TABLE = "CREATE TABLE $TABLE_STRAVA_AUTH ("
-        "$COL_ATHLETE_ID INTEGER PRIMARY KEY, "
-        "$COL_ACCESS_TOKEN TEXT, "
-        "$COL_EXPIRES_AT INTEGER, "
-        "$COL_REFRESH_TOKEN TEXT)";
-    db.execute(CREATE_STRAVA_AUTH_TABLE);
+    String createTableSql = "CREATE TABLE $tableName ("
+        "$fieldAthleteId INTEGER PRIMARY KEY, "
+        "$fieldAccessToken TEXT, "
+        "$fieldExpiresAt INTEGER, "
+        "$fieldRefreshToken TEXT)";
+    db.execute(createTableSql);
   }
 
   void upgradeTable(Database db, int oldVersion, int newVersion) {
-    db.execute("DROP TABLE IF EXISTS $TABLE_STRAVA_AUTH");
+    db.execute("DROP TABLE IF EXISTS $tableName");
     createTable(db);
   }
 
   void addOrUpdateStravaAuth(StravaAuth stravaAuth) async {
-    Database db = await dbHandler.database;
-    var result = await db.query(TABLE_STRAVA_AUTH,
-        where: "$COL_ATHLETE_ID = ?", whereArgs: [stravaAuth.getAthlete_id()]);
+    Database db = await dbHelper.database;
+    var result = await db.query(tableName,
+        where: "$fieldAthleteId = ?", whereArgs: [stravaAuth.getAthleteId]);
     if (result.isNotEmpty) {
       updateStravaAuth(stravaAuth);
     } else {
@@ -35,39 +39,54 @@ class StravaAuthTable {
   }
 
   void addStravaAuth(StravaAuth stravaAuth) async {
-    Database db = await dbHandler.database;
+    Database db = await dbHelper.database;
     var values = {
-      COL_ATHLETE_ID: stravaAuth.getAthlete_id(),
-      COL_ACCESS_TOKEN: stravaAuth.getAccess_token(),
-      COL_EXPIRES_AT: stravaAuth.getExpires_at(),
-      COL_REFRESH_TOKEN: stravaAuth.getRefresh_token(),
+      fieldAthleteId: stravaAuth.getAthleteId,
+      fieldAccessToken: stravaAuth.getAccessToken,
+      fieldExpiresAt: stravaAuth.getExpiresAt,
+      fieldRefreshToken: stravaAuth.getRefreshToken,
     };
-    db.insert(TABLE_STRAVA_AUTH, values);
+    db.insert(tableName, values);
   }
 
   void updateStravaAuth(StravaAuth stravaAuth) async {
-    Database db = await dbHandler.database;
+    Database db = await dbHelper.database;
     var values = {
-      COL_ACCESS_TOKEN: stravaAuth.getAccess_token(),
-      COL_EXPIRES_AT: stravaAuth.getExpires_at(),
-      COL_REFRESH_TOKEN: stravaAuth.getRefresh_token(),
+      fieldAccessToken: stravaAuth.getAccessToken,
+      fieldExpiresAt: stravaAuth.getExpiresAt,
+      fieldRefreshToken: stravaAuth.getRefreshToken,
     };
-    db.update(TABLE_STRAVA_AUTH, values,
-        where: "$COL_ATHLETE_ID = ?", whereArgs: [stravaAuth.getAthlete_id()]);
+    db.update(tableName, values,
+        where: "$fieldAthleteId = ?", whereArgs: [stravaAuth.getAthleteId]);
   }
 
-  Future<StravaAuth> getStravaAuth() async {
-    Database db = await dbHandler.database;
-    var result = await db.query(TABLE_STRAVA_AUTH);
+  // Future<StravaAuth> getStravaAuth() async {
+  //   Database db = await dbHelper.database;
+  //   var result = await db.query(tableName);
+  //   if (result.isNotEmpty) {
+  //     var row = result.first;
+  //     StravaAuth stravaAuth = StravaAuth();
+  //     stravaAuth.setAthlete_id(row[fieldAthleteId]);
+  //     stravaAuth.setAccess_token(row[fieldAccessToken]);
+  //     stravaAuth.setExpires_at(row[fieldExpiresAt]);
+  //     stravaAuth.setRefresh_token(row[fieldRefreshToken]);
+  //     return stravaAuth;
+  //   }
+  //   return null;
+  // }
+
+
+    Future<StravaAuth?> getStravaAuth(int id) async {
+    final result = await dbHelper.database.then((db) => db.query(
+          tableName,
+          where: '$fieldAthleteId = ?',
+          whereArgs: [id],
+        ));
+
     if (result.isNotEmpty) {
-      var row = result.first;
-      StravaAuth stravaAuth = StravaAuth();
-      stravaAuth.setAthlete_id(row[COL_ATHLETE_ID]);
-      stravaAuth.setAccess_token(row[COL_ACCESS_TOKEN]);
-      stravaAuth.setExpires_at(row[COL_EXPIRES_AT]);
-      stravaAuth.setRefresh_token(row[COL_REFRESH_TOKEN]);
-      return stravaAuth;
+      return StravaAuth.fromMap(result.first);
+    } else {
+      return null;
     }
-    return null;
   }
 }

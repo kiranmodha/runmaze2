@@ -4,9 +4,9 @@ import 'package:sqflite/sqflite.dart';
 import '../model/city.dart'; // Assuming the City model is in a models directory
 
 class CityTable {
-  static const String TABLE_NAME = 'city_master';
-  static const String COL_ID = 'row_id';
-  static const String COL_NAME = 'city_name';
+  static const String tableName = 'city_master';
+  static const String fieldId = 'row_id';
+  static const String fieldCityName = 'city_name';
 
   final DatabaseHelper dbHelper;
 
@@ -14,9 +14,9 @@ class CityTable {
 
   static Future<void> createTable(Database db) async {
     String createTableSql = '''
-       CREATE TABLE $TABLE_NAME (
-           $COL_ID INTEGER PRIMARY KEY AUTOINCREMENT, 
-           $COL_NAME TEXT
+       CREATE TABLE $tableName (
+           $fieldId INTEGER PRIMARY KEY AUTOINCREMENT, 
+           $fieldCityName TEXT
         )
         ''';
     await db.execute(createTableSql);
@@ -24,9 +24,9 @@ class CityTable {
 
   Future<void> createTableIfNotExists() async {
     String createTableSql = '''
-      CREATE TABLE IF NOT EXISTS $TABLE_NAME ( 
-        $COL_ID INTEGER PRIMARY KEY AUTOINCREMENT, 
-        $COL_NAME TEXT
+      CREATE TABLE IF NOT EXISTS $tableName ( 
+        $fieldId INTEGER PRIMARY KEY AUTOINCREMENT, 
+        $fieldCityName TEXT
         )
         ''';
     await dbHelper.database.then((db) => db.execute(createTableSql));
@@ -34,13 +34,13 @@ class CityTable {
 
   Future<void> deleteAllRecords() async {
     final deletedCount =
-        await dbHelper.database.then((db) => db.delete(TABLE_NAME));
+        await dbHelper.database.then((db) => db.delete(tableName));
     //print('Deleted $deletedCount records');
   }
 
   Future<void> addCity(City city) async {
     final insertedId = await dbHelper.database.then((db) => db.insert(
-          TABLE_NAME,
+          tableName,
           city.toMap(),
           conflictAlgorithm:
               ConflictAlgorithm.replace, // Handle potential conflicts
@@ -50,14 +50,14 @@ class CityTable {
 
   Future<String> getTextFromId(int id) async {
     final maps = await dbHelper.database.then((db) => db.query(
-          TABLE_NAME,
-          columns: [COL_NAME],
-          where: '$COL_ID = ?',
+          tableName,
+          columns: [fieldCityName],
+          where: '$fieldId = ?',
           whereArgs: [id],
         ));
 
     if (maps.isNotEmpty) {
-      return maps.first[COL_NAME] as String;
+      return maps.first[fieldCityName] as String;
     } else {
       return ''; // Handle case where no city is found
     }
@@ -65,7 +65,7 @@ class CityTable {
 
   Future<List<City>> getCities() async {
     final maps = await dbHelper.database
-        .then((db) => db.query(TABLE_NAME, orderBy: COL_NAME));
+        .then((db) => db.query(tableName, orderBy: fieldCityName));
     return List.generate(maps.length, (i) => City.fromMap(maps[i]));
   }
 }
