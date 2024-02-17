@@ -1,6 +1,7 @@
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter/material.dart';
 
-class Settings {
+class Settings extends ChangeNotifier {
   int _athleteId = 0;
   int _clientId = 76621;
   String _clientSecret = "5635717f59e4ade74bf85b16eb0ce74555e25125";
@@ -27,12 +28,18 @@ class Settings {
   late SharedPreferences _prefs;
 
   Settings() {
-    _init();
+     init();
   }
 
-  Future<void> _init() async {
+  String get userId => _userId;
+
+  Future<void> init() async {
     _prefs = await SharedPreferences.getInstance();
     loadFromPreferences();
+  }
+
+  void notify() {
+    ChangeNotifier();
   }
 
   set athleteId(int value) {
@@ -198,6 +205,22 @@ class Settings {
 
   String get url {
     return _url;
+  }
+
+
+  @override
+  String toString() {
+    return 'Settings{'
+        'cityMasterVersion: $_cityMasterVersion, '
+        'clubMasterVersion: $_clubMasterVersion, '
+        'gapRequestForWorkout: $_gapRequestForWorkout, '
+        'gapRequestForLeaderboard: $_gapRequestForLeaderboard, '
+        'gapRequestForHdcLeaderboard: $_gapRequestForHdcLeaderboard, '
+        'requiredVersion: $_requiredVersion, '
+        'firstStravaConnect: $_firstStravaConnect, '
+        'showHdcLeaderboard: $_showHdcLeaderboard, '
+        'fetchAllWorkouts: $_fetchAllWorkouts, '
+        'url: $_url}';
   }
 
   void loadFromPreferences() {
