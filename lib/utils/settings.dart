@@ -1,7 +1,8 @@
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
-class Settings extends ChangeNotifier {
+class Settings with ChangeNotifier {
   int _athleteId = 0;
   int _clientId = 76621;
   String _clientSecret = "5635717f59e4ade74bf85b16eb0ce74555e25125";
@@ -28,10 +29,8 @@ class Settings extends ChangeNotifier {
   late SharedPreferences _prefs;
 
   Settings() {
-     init();
+    init();
   }
-
-  String get userId => _userId;
 
   Future<void> init() async {
     _prefs = await SharedPreferences.getInstance();
@@ -60,6 +59,7 @@ class Settings extends ChangeNotifier {
   set loggedIn(bool value) {
     _loggedIn = value;
     _prefs.setBool("logged", value);
+    notifyListeners();
   }
 
   set allowDirectStrava(int value) {
@@ -100,6 +100,7 @@ class Settings extends ChangeNotifier {
   set userId(String value) {
     _userId = value;
     _prefs.setString("user_id", value);
+    notifyListeners();
   }
 
   set password(String value) {
@@ -145,6 +146,10 @@ class Settings extends ChangeNotifier {
   set url(String value) {
     _url = value;
     _prefs.setString("url", value);
+  }
+
+  String get userId {
+    return _userId;
   }
 
   int get athleteId {
@@ -206,7 +211,6 @@ class Settings extends ChangeNotifier {
   String get url {
     return _url;
   }
-
 
   @override
   String toString() {
@@ -278,4 +282,20 @@ class Settings extends ChangeNotifier {
     await _prefs.setBool("show_hdc_leaderboard", _showHdcLeaderboard);
     await _prefs.setString("url", _url);
   }
+
+
+  Future<bool> login(String username, String password) async {
+    final response = await Supabase.instance.client
+        .from('athlete_master')
+        .select()
+        .eq('email', username)
+        .eq('password', password);
+
+    if (response.isNotEmpty) {
+      return true;
+    }
+    return false;
+  }
+
+
 }

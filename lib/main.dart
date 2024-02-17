@@ -16,13 +16,13 @@ void main() async {
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndiY2VmZmRmanVjemh1b3JjeGtmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDc1MzgzNzAsImV4cCI6MjAyMzExNDM3MH0.gHSDpIJ9LZO9WaG-2zqKSwna6pXZVs_jwNpq2B-iKPs',
   );
 
-  // runApp(
-  //   ChangeNotifierProvider(
-  //     create: (context) => Settings(),
-  //     child: const MyApp(),
-  //   ),
-  // );
-  runApp(MyApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => Settings(),
+      child: const MyApp(),
+    ),
+  );
+ // runApp(MyApp());
 }
 
 // class MyApp extends StatelessWidget {
@@ -61,7 +61,8 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (context) => AuthService(),
+     // create: (context) => AuthService(),
+      create: (context) => Settings(),
       child: MaterialApp(
         title: 'Flutter Demo',
         theme: ThemeData(

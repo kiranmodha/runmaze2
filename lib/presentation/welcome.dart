@@ -11,7 +11,7 @@ class WelcomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<Settings>(builder: (context, settings, child) {
       if (settings.loggedIn) {
-        return const Home();
+        return HomePage();
       } else if (settings.loggedIn == false) {
         return  LoginScreen();
       }
