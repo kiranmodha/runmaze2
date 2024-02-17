@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 
-class Home extends StatelessWidget {
-  const Home({super.key});
-
+class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return const Center(
-      child: Text('Welcome to Runmaze'),
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Home'),
+      ),
+      body: const Center(
+        child: Text('Welcome to Runmaze!'),
+      ),
     );
   }
 }

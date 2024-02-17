@@ -105,7 +105,6 @@ class LoginScreen extends StatelessWidget {
                         settings.loggedIn = true;
                         settings.notify();
                         print(username);
-                      
                       }
                     });
                   },
@@ -131,5 +130,73 @@ class LoginScreen extends StatelessWidget {
       return true;
     }
     return false;
+  }
+}
+
+class LoginPage extends StatelessWidget {
+  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
+    AuthService authService = Provider.of<AuthService>(context, listen: false);
+    authService.initPrefs(); // Initialize SharedPreferences
+
+    return FutureBuilder<bool>(
+      future: authService.isLoggedIn(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return CircularProgressIndicator();
+        } else {
+          final isLoggedIn = snapshot.data;
+          if (isLoggedIn) {
+            // User is already logged in, navigate to home page
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              Navigator.pushReplacementNamed(context, '/home');
+            });
+            return Container(); // Return empty container while navigating
+          } else {
+            // User is not logged in, show login form
+            return Scaffold(
+              appBar: AppBar(
+                title: Text('Login'),
+              ),
+              body: Padding(
+                padding: EdgeInsets.all(16.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    TextField(
+                      controller: _usernameController,
+                      decoration: InputDecoration(labelText: 'Username'),
+                    ),
+                    TextField(
+                      controller: _passwordController,
+                      decoration: InputDecoration(labelText: 'Password'),
+                      obscureText: true,
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        String username = _usernameController.text.trim();
+                        String password = _passwordController.text.trim();
+                        authService.login(username, password).then((loggedIn) {
+                          if (loggedIn) {
+                            Navigator.pushReplacementNamed(context, '/home');
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text('Login failed')));
+                          }
+                        });
+                      },
+                      child: Text('Login'),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }
+        }
+      },
+    );
   }
 }
