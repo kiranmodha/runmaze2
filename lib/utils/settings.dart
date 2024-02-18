@@ -287,38 +287,41 @@ class Settings with ChangeNotifier {
     await _prefs.setString("url", _url);
   }
 
-  Future<bool> loginFromServer(String username, String password) async {
+  Future<bool> loginFromServerDb(String username, String password) async {
     final response = await Supabase.instance.client
         .from('athlete_master')
         .select()
         .eq('email', username)
         .eq('password', password);
-     if (response.isNotEmpty) {
-       Athlete athlete = Athlete.fromMap(response[0]);
-       AthleteTable athleteTable = AthleteTable(DatabaseHelper.instance);
-       athleteTable.addAthlete(athlete);
 
-       return true;
-     }
-     return false;
+    if (response.isNotEmpty) {
+      Athlete athlete = Athlete.fromMap(response[0]);
+      AthleteTable athleteTable = AthleteTable(DatabaseHelper.instance);
+      athleteTable.addAthlete(athlete);
+      return true;
+    }
+
+    return false;
   }
 
-  Future<bool> loginFromLocalDatabse(String username, String password) async {
+  Future<bool> loginFromLocalDb(String username, String password) async {
     AthleteTable athleteTable = AthleteTable(DatabaseHelper.instance);
-    Athlete? athlete = await athleteTable.login( username , password );
+    Athlete? athlete = await athleteTable.login(username, password);
     if (athlete != null) {
       userId = username;
       loggedIn = true;
       athleteId = athlete.id;
       password = password;
       return true;
-    }
-    else {
-      return await loginFromServer(username, password);;
+    } else {
+      return await loginFromServerDb(username, password);
     }
   }
 
   Future<void> logout() async {
-    await _prefs.remove('authToken');
+    loggedIn = false;
+    athleteId = 0;
+    userId = "";
+    password = "";
   }
 }

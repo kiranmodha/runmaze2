@@ -1,18 +1,25 @@
+import 'package:runmaze2/model/strava_auth.dart';
+
 import 'strava_auth.dart';
 
 class Athlete {
-  // Properties
+
   final int id;
-  final String name;
-  final String email;
-  final String password;
-  final String gender;
-  final String birthdate;
-  final int city;
-  final int club;
-  final int company;
-  final StravaAuth stravaAuth;
-  final int remoteUpdate;
+  String name;
+  String email;
+  String password;
+  String gender;
+  String birthdate;
+  int city;
+  int club;
+  int company;
+  int stravaAthleteId;
+  String accessToken;
+  DateTime expiresAt;
+  String refreshToken;
+  int clientId;
+  String clientSecret;
+  int remoteUpdate;
 
   // Constructor
   Athlete({
@@ -25,24 +32,30 @@ class Athlete {
     required this.city,
     required this.club,
     required this.company,
-    required this.stravaAuth,
+    required this.stravaAthleteId,
+    required this.accessToken,
+    required this.expiresAt,
+    required this.refreshToken,
+    required this.clientId,
+    required this.clientSecret,
     required this.remoteUpdate,
   });
 
-  // Getters
-  int getId() => id;
-  String getName() => name;
-  String getEmail() => email;
-  String getPassword() => password;
-  String getGender() => gender;
-  String getBirthdate() => birthdate;
-  int getCity() => city;
-  int getClub() => club;
-  int getCompany() => company;
-  StravaAuth getStravaAuth() => stravaAuth;
-  int getRemoteUpdate() => remoteUpdate;
 
-// Modified toJson method to include excludeSensitive flag
+  StravaAuth get stravaAuth {
+    return StravaAuth(
+      athleteId: stravaAthleteId,
+      accessToken: accessToken,
+      expiresAt: expiresAt,
+      refreshToken: refreshToken,
+      clientId: clientId,
+      clientSecret: clientSecret,
+    );
+  }
+
+
+
+
   Map<String, dynamic> toJson() {
     return {
       "row_id": id,
@@ -54,12 +67,12 @@ class Athlete {
       "city": city,
       "club": club,
       "company": company,
-      "strava_athlete_id": stravaAuth.athleteId,
-      "access_token": stravaAuth.accessToken,
-      "expires_at": stravaAuth.expiresAt,
-      "refresh_token": stravaAuth.refreshToken,
-      "client_id": stravaAuth.clientId,
-      "client_secret": stravaAuth.clientSecret,
+      "strava_athlete_id": stravaAthleteId,
+      "access_token": accessToken,
+      "expires_at": expiresAt,
+      "refresh_token": refreshToken,
+      "client_id": clientId,
+      "client_secret": clientSecret,
       "remote_update": remoteUpdate,
     };
   }
@@ -77,10 +90,14 @@ class Athlete {
         'city: $city, '
         'club: $club, '
         'company: $company, '
-        'stravaAuth: $stravaAuth, '
+        'strava_athlete_id: $stravaAthleteId, '
+        'accessToken: $accessToken, '
+        'expiresAt: $expiresAt, '
+        'refreshToken: $refreshToken, '
+        'clientId: $clientId, '
+        'clientSecret: $clientSecret, '
         'remoteUpdate: $remoteUpdate}';
   }
-
 
 // Factory constructor from json
   factory Athlete.fromJson(Map<String, dynamic> json,
@@ -95,8 +112,12 @@ class Athlete {
         city: json['city'] as int,
         club: json['club'] as int,
         company: json['company'] as int,
-        stravaAuth:
-            StravaAuth.fromJson(json['strava_auth'] as Map<String, dynamic>),
+        stravaAthleteId: json['strava_athlete_id'] as int,
+        accessToken: json['access_token'] as String,
+        expiresAt: DateTime.fromMillisecondsSinceEpoch(json['expires_at'] as int),
+        refreshToken: json['refresh_token'] as String,
+        clientId: json['client_id'] as int,
+        clientSecret: json['client_secret'] as String,
         remoteUpdate: json['remote_update'] as int,
       );
 
@@ -112,8 +133,12 @@ class Athlete {
       city: map['city'] as int,
       club: map['club'] as int,
       company: map['company'] as int,
-      stravaAuth:
-          StravaAuth.fromMap(map['strava_auth'] as Map<String, dynamic>),
+      stravaAthleteId: map['strava_athlete_id'] as int,
+      accessToken: map['access_token'] as String,
+      expiresAt: DateTime.fromMillisecondsSinceEpoch(map['expires_at'] as int),
+      refreshToken: map['refresh_token'] as String,
+      clientId: map['client_id'] as int,
+      clientSecret: map['client_secret'] as String,
       remoteUpdate: map['remote_update'] as int,
     );
   }
@@ -129,12 +154,13 @@ class Athlete {
       'city': city,
       'club': club,
       'company': company,
-      'strava_auth': stravaAuth.toMap(),
+      'strava_athlete_id': stravaAthleteId,
+      'access_token': accessToken,
+      'expires_at': expiresAt.millisecondsSinceEpoch,
+      'refresh_token': refreshToken,
+      'client_id': clientId,
+      'client_secret': clientSecret,
       'remote_update': remoteUpdate,
     };
   }
-
 }
-
-
-

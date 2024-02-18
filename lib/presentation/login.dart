@@ -39,7 +39,7 @@ class LoginPage extends StatelessWidget {
                 onPressed: () {
                   String username = _usernameController.text.trim();
                   String password = _passwordController.text.trim();
-                  settings.loginFromLocalDatabse(username, password).then((loggedIn) {
+                  settings.loginFromLocalDb(username, password).then((loggedIn) {
                     if (loggedIn) {
                       Navigator.pushReplacementNamed(context, '/home');
                     } else {

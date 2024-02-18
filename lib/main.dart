@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:runmaze2/presentation/home.dart';
 import 'package:runmaze2/presentation/login.dart';
-import 'package:runmaze2/presentation/welcome.dart';
-import 'package:runmaze2/services/authservie.dart';
 import 'package:runmaze2/utils/settings.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:provider/provider.dart';
@@ -22,38 +20,7 @@ void main() async {
       child: const MyApp(),
     ),
   );
- // runApp(MyApp());
 }
-
-// class MyApp extends StatelessWidget {
-//   const MyApp({super.key});
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return ChangeNotifierProvider(
-//       create: (context) => Settings(),
-//       child: MaterialApp(
-//         debugShowCheckedModeBanner: false,
-//         title: 'Runmaze 2',
-//         theme: ThemeData(
-//           useMaterial3: true,
-//           colorScheme: ColorScheme.fromSeed(seedColor: Colors.teal),
-//         ),
-//         home: const WelcomeScreen(),
-//       ),
-//     );
-//   }
-// }
-
-// import 'package:flutter/material.dart';
-// import 'package:provider/provider.dart';
-// import 'auth_service.dart';
-// import 'login_page.dart';
-// import 'home_page.dart';
-
-// void main() {
-//   runApp(MyApp());
-// }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -61,7 +28,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-     // create: (context) => AuthService(),
+      // create: (context) => AuthService(),
       create: (context) => Settings(),
       child: MaterialApp(
         title: 'Flutter Demo',

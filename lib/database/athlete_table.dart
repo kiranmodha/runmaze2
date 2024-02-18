@@ -19,7 +19,7 @@ class AthleteTable {
   static const String fieldAccessToken = 'access_token';
   static const String fieldExpiresAt = 'expires_at';
   static const String fieldRefreshToken = 'refresh_token';
-  static const String fieldCliendId = 'client_id';
+  static const String fieldClientId = 'client_id';
   static const String fieldClientSecret = 'client_secret';
   static const String fieldRemoteUpdate = 'remote_update';
 
@@ -39,13 +39,13 @@ class AthleteTable {
         $fieldCity INTEGER,
         $fieldClub INTEGER,
         $fieldCompany INTEGER,
-        $fieldRemoteUpdate INTEGER,
+        $fieldStravaAthleteId INTEGER
         $fieldAccessToken  TEXT, 
         $fieldExpiresAt INTEGER, 
         $fieldRefreshToken  TEXT,
-        $fieldCliendId  INTEGER, 
+        $fieldClientId  INTEGER, 
         $fieldClientSecret  TEXT,  
-        $fieldStravaAthleteId INTEGER
+        $fieldRemoteUpdate INTEGER,
       )
     ''';
     await db.execute(createTableSql);
@@ -117,7 +117,7 @@ class AthleteTable {
         fieldAccessToken,
         fieldExpiresAt,
         fieldRefreshToken,
-        fieldCliendId,
+        fieldClientId,
         fieldClientSecret,
       ],
       where: '$fieldId = ? AND $fieldStravaAthleteId > 0',
@@ -137,7 +137,7 @@ class AthleteTable {
     values[fieldExpiresAt] = stravaAuth
         .expiresAt; // Ensure proper Dart representation (e.g., DateTime)
     values[fieldRefreshToken] = stravaAuth.refreshToken;
-    values[fieldCliendId] = stravaAuth.clientId;
+    values[fieldClientId] = stravaAuth.clientId;
     values[fieldClientSecret] = stravaAuth
         .clientSecret; // Consider security implications of storing this
 
@@ -160,13 +160,8 @@ class AthleteTable {
     final stravaAuth = athlete.stravaAuth;
 
     // Ensure non-null StravaAuth
-    if (stravaAuth != null) {
-      await updateStravaAuth(db, stravaAuth, athlete.id);
-    } else {
-      // Handle case where there's no StravaAuth associated with the athlete
-      print('Athlete ID ${athlete.id} has no Strava authorization data.');
+    await updateStravaAuth(db, stravaAuth, athlete.id);
     }
-  }
 
 
 }
