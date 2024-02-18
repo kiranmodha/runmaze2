@@ -1,5 +1,6 @@
 
 
+import 'package:runmaze2/database/athlete_table.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:runmaze2/database/workout_table.dart';
 
@@ -22,6 +23,8 @@ class DatabaseHelper {
       onCreate: _onCreate,
       onUpgrade: _onUpgrade,
     );
+    // Following code is used to create tables if they don't exist
+    //await AthleteTable.createTable(_database!);
 
     return _database!;
   }
@@ -29,6 +32,7 @@ class DatabaseHelper {
   Future _onCreate(Database db, int version) async {
 
     await WorkoutTable.createTable(db);
+    await AthleteTable.createTable(db);
 
     // Create other tables (stravaAuth, athlete, version, etc.) using a similar approach
 

@@ -13,7 +13,7 @@ class WelcomeScreen extends StatelessWidget {
       if (settings.loggedIn) {
         return HomePage();
       } else if (settings.loggedIn == false) {
-        return  LoginScreen();
+        // return  LoginScreen();
       }
       return const Center(child: CircularProgressIndicator());
     });

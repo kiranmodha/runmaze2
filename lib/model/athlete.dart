@@ -45,7 +45,7 @@ class Athlete {
 // Modified toJson method to include excludeSensitive flag
   Map<String, dynamic> toJson() {
     return {
-      "id": id,
+      "row_id": id,
       "athlete_name": name,
       "email": email,
       "password": password,
@@ -68,8 +68,8 @@ class Athlete {
   @override
   String toString() {
     return 'Athlete{'
-        'id: $id, '
-        'name: $name, '
+        'row_id: $id, '
+        'athlete_name: $name, '
         'email: $email, '
         'password: $password, '
         'gender: $gender, '
@@ -86,8 +86,8 @@ class Athlete {
   factory Athlete.fromJson(Map<String, dynamic> json,
           {bool includeSensitive = false}) =>
       Athlete(
-        id: json['id'] as int,
-        name: json['name'] as String,
+        id: json['row_id'] as int,
+        name: json['athlete_name'] as String,
         email: includeSensitive ? json['email'] as String : "******",
         password: includeSensitive ? json['password'] as String : "******",
         gender: json['gender'] as String,
@@ -103,8 +103,8 @@ class Athlete {
 // Function to create an Athlete object from a map
   factory Athlete.fromMap(Map<String, dynamic> map) {
     return Athlete(
-      id: map['id'] as int,
-      name: map['name'] as String,
+      id: map['row_id'] as int,
+      name: map['athlete_name'] as String,
       email: map['email'] as String,
       password: map['password'] as String,
       gender: map['gender'] as String,
@@ -120,8 +120,8 @@ class Athlete {
 
   Map<String, dynamic> toMap() {
     return {
-      'id': id,
-      'name': name,
+      'row_id': id,
+      'athlete_name': name,
       'email': email,
       'password': password,
       'gender': gender,

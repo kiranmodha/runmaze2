@@ -46,15 +46,17 @@ class StravaAuth {
 
   // toJson method
   Map<String, dynamic> toJson() => {
-        "athlete_id": athleteId,
+        "row_id": athleteId,
         "access_token": accessToken,
         "expires_at": expiresAt?.millisecondsSinceEpoch,
         "refresh_token": refreshToken,
+        "client_id": clientId,
+        "client_secret": clientSecret,
       };
 
   // Factory constructor from json
   factory StravaAuth.fromJson(Map<String, dynamic> json) => StravaAuth(
-        athleteId: json['athlete_id'] as int,
+        athleteId: json['row_id'] as int,
         accessToken: json['access_token'] as String,
         expiresAt: json['expires_at'] != null
             ? DateTime.fromMillisecondsSinceEpoch(json['expires_at'] as int)
@@ -68,7 +70,7 @@ class StravaAuth {
   @override
   String toString() {
     return 'StravaAuth{'
-        'athleteId: $athleteId, '
+        'row_Id: $athleteId, '
         'accessToken: *****, ' // Hide access token
         'expiresAt: $expiresAt, '
         'refreshToken: *****, ' // Hide refresh token
@@ -80,7 +82,7 @@ class StravaAuth {
   // fromMap function
   factory StravaAuth.fromMap(Map<String, dynamic> map) {
     return StravaAuth(
-      athleteId: map['athlete_id'] as int,
+      athleteId: map['row_id'] as int,
       accessToken: map['access_token'] as String,
       expiresAt: map['expires_at'] != null
           ? DateTime.fromMillisecondsSinceEpoch(map['expires_at'] as int)
@@ -95,7 +97,7 @@ class StravaAuth {
 
   Map<String, dynamic> toMap() {
     return {
-      'athlete_id': athleteId,
+      'row_id': athleteId,
       'access_token': accessToken,
       'expires_at': expiresAt?.millisecondsSinceEpoch,
       'refresh_token': refreshToken,

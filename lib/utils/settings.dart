@@ -1,6 +1,10 @@
+import 'package:runmaze2/database/athlete_table.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+
+import '../database/database_helper.dart';
+import '../model/athlete.dart';
 
 class Settings with ChangeNotifier {
   int _athleteId = 0;
@@ -283,19 +287,38 @@ class Settings with ChangeNotifier {
     await _prefs.setString("url", _url);
   }
 
-
-  Future<bool> login(String username, String password) async {
+  Future<bool> loginFromServer(String username, String password) async {
     final response = await Supabase.instance.client
         .from('athlete_master')
         .select()
         .eq('email', username)
         .eq('password', password);
+     if (response.isNotEmpty) {
+       Athlete athlete = Athlete.fromMap(response[0]);
+       AthleteTable athleteTable = AthleteTable(DatabaseHelper.instance);
+       athleteTable.addAthlete(athlete);
 
-    if (response.isNotEmpty) {
-      return true;
-    }
-    return false;
+       return true;
+     }
+     return false;
   }
 
+  Future<bool> loginFromLocalDatabse(String username, String password) async {
+    AthleteTable athleteTable = AthleteTable(DatabaseHelper.instance);
+    Athlete? athlete = await athleteTable.login( username , password );
+    if (athlete != null) {
+      userId = username;
+      loggedIn = true;
+      athleteId = athlete.id;
+      password = password;
+      return true;
+    }
+    else {
+      return await loginFromServer(username, password);;
+    }
+  }
 
+  Future<void> logout() async {
+    await _prefs.remove('authToken');
+  }
 }

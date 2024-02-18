@@ -1,5 +1,3 @@
-// import 'package:sqflite/sqflite.dart';
-
 import '../model/athlete.dart';
 import '../model/strava_auth.dart';
 import 'database_helper.dart';
@@ -7,8 +5,8 @@ import 'database_helper.dart';
 import 'package:sqflite/sqflite.dart';
 
 class AthleteTable {
-  static const String tableName = 'athlete';
-  static const String fieldId = 'id';
+  static const String tableName = 'athlete_master';
+  static const String fieldId = 'row_id';
   static const String fieldEmail = 'email';
   static const String fieldPassword = 'password';
   static const String fieldName = 'athlete_name';
