@@ -8,7 +8,7 @@ part 'athlete.g.dart';
 class Athlete {
 
   @HiveField(0)
-  final int id;
+  final int rowId;
   
   @HiveField(1)
   String name;
@@ -59,7 +59,7 @@ class Athlete {
 
   // Constructor
   Athlete({
-    required this.id,
+    required this.rowId,
     required this.name,
     required this.email,
     required this.password,
@@ -88,9 +88,10 @@ class Athlete {
     );
   }
 
+  
   Map<String, dynamic> toJson() {
     return {
-      "row_id": id,
+      "row_id": rowId,
       "athlete_name": name,
       "email": email,
       "password": password,
@@ -113,7 +114,7 @@ class Athlete {
   @override
   String toString() {
     return 'Athlete{'
-        'row_id: $id, '
+        'row_id: $rowId, '
         'athlete_name: $name, '
         'email: $email, '
         'password: $password, '
@@ -135,7 +136,7 @@ class Athlete {
   factory Athlete.fromJson(Map<String, dynamic> json,
           {bool includeSensitive = false}) =>
       Athlete(
-        id: json['row_id'] as int,
+        rowId: json['row_id'] as int,
         name: json['athlete_name'] as String,
         email: includeSensitive ? json['email'] as String : "******",
         password: includeSensitive ? json['password'] as String : "******",
@@ -156,7 +157,7 @@ class Athlete {
 // Function to create an Athlete object from a map
   factory Athlete.fromMap(Map<String, dynamic> map) {
     return Athlete(
-      id: map['row_id'] as int,
+      rowId: map['row_id'] as int,
       name: map['athlete_name'] as String,
       email: map['email'] as String,
       password: map['password'] as String,
@@ -177,7 +178,7 @@ class Athlete {
 
   Map<String, dynamic> toMap() {
     return {
-      'row_id': id,
+      'row_id': rowId,
       'athlete_name': name,
       'email': email,
       'password': password,

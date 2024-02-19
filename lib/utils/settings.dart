@@ -1,3 +1,4 @@
+import 'package:runmaze2/database/hive_database/athlete_hive.dart';
 import 'package:runmaze2/database/sqlite_database/athlete_table.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
@@ -232,8 +233,7 @@ class Settings with ChangeNotifier {
         'url: $_url}';
   }
 
-  Future<void> loadFromPreferences()  async {
-
+  Future<void> loadFromPreferences() async {
     _athleteId = _prefs.getInt("id") ?? 0;
     _clientId = _prefs.getInt("client_id") ?? 76621;
     _clientSecret = _prefs.getString("client_secret") ??
@@ -301,21 +301,37 @@ class Settings with ChangeNotifier {
     if (response.isNotEmpty) {
       print('Login successful from remote database');
       Athlete athlete = Athlete.fromMap(response[0]);
-      AthleteTable athleteTable = AthleteTable(DatabaseHelper.instance);
-      athleteTable.addAthlete(athlete);
+      AthleteHive athleteHive = AthleteHive();
+      athleteHive.addAthlete(athlete);
       return true;
     }
 
     return false;
   }
 
+  // Future<bool> loginFromLocalDb(String username, String password) async {
+  //   AthleteTable athleteTable = AthleteTable(DatabaseHelper.instance);
+  //   Athlete? athlete = await athleteTable.login(username, password);
+  //   if (athlete != null) {
+  //     userId = username;
+  //     loggedIn = true;
+  //     athleteId = athlete.id;
+  //     password = password;
+  //     print('Login successful from local database');
+  //     return true;
+  //   } else {
+  //     return await loginFromServerDb(username, password);
+  //   }
+  // }
+
   Future<bool> loginFromLocalDb(String username, String password) async {
-    AthleteTable athleteTable = AthleteTable(DatabaseHelper.instance);
-    Athlete? athlete = await athleteTable.login(username, password);
+    AthleteHive athleteHive = AthleteHive();
+    Athlete? athlete = await athleteHive.login(username, password);
+
     if (athlete != null) {
       userId = username;
       loggedIn = true;
-      athleteId = athlete.id;
+      athleteId = athlete.rowId;
       password = password;
       print('Login successful from local database');
       return true;
@@ -330,4 +346,5 @@ class Settings with ChangeNotifier {
     userId = "";
     password = "";
   }
+
 }

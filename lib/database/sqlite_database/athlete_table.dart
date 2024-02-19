@@ -69,7 +69,7 @@ class AthleteTable {
     Database db = await dbHelper.database;
     await db.transaction((txn) async {
       txn.update(tableName, athlete.toJson(),
-          where: '$fieldId = ?', whereArgs: [athlete.id]);
+          where: '$fieldId = ?', whereArgs: [athlete.rowId]);
     });
   }
 
@@ -80,7 +80,7 @@ class AthleteTable {
         athlete.remoteUpdate; // Assuming equivalent property
 
     // Update the athlete record
-    final id = athlete.id;
+    final id = athlete.rowId;
     await db.update(
       tableName,
       values,
@@ -160,7 +160,7 @@ class AthleteTable {
     final stravaAuth = athlete.stravaAuth;
 
     // Ensure non-null StravaAuth
-    await updateStravaAuth(db, stravaAuth, athlete.id);
+    await updateStravaAuth(db, stravaAuth, athlete.rowId);
     }
 
 

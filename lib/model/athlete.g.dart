@@ -17,7 +17,7 @@ class AthleteAdapter extends TypeAdapter<Athlete> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return Athlete(
-      id: fields[0] as int,
+      rowId: fields[0] as int,
       name: fields[1] as String,
       email: fields[2] as String,
       password: fields[3] as String,
@@ -41,7 +41,7 @@ class AthleteAdapter extends TypeAdapter<Athlete> {
     writer
       ..writeByte(16)
       ..writeByte(0)
-      ..write(obj.id)
+      ..write(obj.rowId)
       ..writeByte(1)
       ..write(obj.name)
       ..writeByte(2)

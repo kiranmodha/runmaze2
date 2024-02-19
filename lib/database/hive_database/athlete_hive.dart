@@ -1,42 +1,57 @@
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:runmaze2/model/athlete.dart';
 
-
 class AthleteHive {
-  //late Box<TodoItem> _todoBox;
+  final String _boxName = 'athletes';
+
   Box<Athlete> _athleteBox = Hive.box<Athlete>('athletes');
 
-  Future<void> openBox() async {
-    _athleteBox = await Hive.openBox<Athlete>('athletes');
+
+
+  // Future<void> openBox() async {
+  //   _athleteBox = await Hive.openBox<Athlete>(_boxName);
+  // }
+
+  Future<void> _prepareBox() async {
+    if (!Hive.isBoxOpen(_boxName)) {
+      _athleteBox = await Hive.openBox<Athlete>(_boxName);
+    } else {
+      _athleteBox = Hive.box(_boxName);
+    }
   }
 
-  void addAthlete(Athlete athlete) {
+  Future<void> addAthlete(Athlete athlete) async {
+    await _prepareBox();
     _athleteBox.add(athlete);
   }
 
-  void updateAthlete(Athlete oldAthlete, Athlete newAthlete) {
+  Future<void> updateAthlete(Athlete oldAthlete, Athlete newAthlete) async {
+    await _prepareBox();
     final int index = _athleteBox.values.toList().indexOf(oldAthlete);
     if (index != -1) {
       _athleteBox.putAt(index, newAthlete);
     }
   }
 
-  void updateAthleteByKey(int key, Athlete athlete) {
+  Future<void> updateAthleteByKey(int key, Athlete athlete) async {
+    await _prepareBox();
     if (_athleteBox.containsKey(key)) {
       _athleteBox.put(key, athlete);
     }
   }
 
-  void deleteAthlete(Athlete athlete) {
+  Future<void> deleteAthlete(Athlete athlete) async {
+    await _prepareBox();
     final int index = _athleteBox.values.toList().indexOf(athlete);
     if (index != -1) {
       _athleteBox.deleteAt(index);
     }
   }
 
-  bool deleteAthleteByKey(int key) {
+  Future<bool> deleteAthleteByKey(int key) async {
+    await _prepareBox();
     final Athlete? athlete = _athleteBox.get(key);
-    if (athlete != null ) {
+    if (athlete != null) {
       try {
         _athleteBox.delete(key);
       } catch (e) {
@@ -49,52 +64,36 @@ class AthleteHive {
     return true;
   }
 
-  List<Athlete> getAllAthletes() {
+  Future<List<Athlete>> getAllAthletes() async {
+    await _prepareBox();
     return _athleteBox.values.toList();
   }
 
-  // List<Athlete> getActiveTodoItems() {
-  //   return _athleteBox.values
-  //       // .where((todoItem) => todoItem.isDeleted == true )
-  //       // .where((todoItem) =>
-  //       //     todoItem.isDeleted == false || todoItem.isDeleted == null)
-
-  //       .where((todoItem) =>
-  //           todoItem.isDone == false &&
-  //           (todoItem.isDeleted == false || todoItem.isDeleted == null))
-  //       .toList();
-  // }
-
-  // List<Athlete> getDeletedTodoItems() {
-  //   return _athleteBox.values
-  //       .where((todoItem) => todoItem.isDeleted == true)
-  //       .toList();
-  // }
-
-  // List<Athlete> getCompletedTodoItems() {
-  //   return _athleteBox.values
-  //       .where((todoItem) => todoItem.isDone == true)
-  //       .toList();
-  // }
-
-  Athlete? getAthleteByKey(int key) {
+  Future<Athlete?> getAthleteByKey(int key) async {
+    await _prepareBox();
     return _athleteBox.get(key);
   }
 
-  Athlete? getAthleteAt(int index) {
+  Future<Athlete?> getAthleteAt(int index) async {
+    await _prepareBox();
     return _athleteBox.getAt(index);
   }
 
   Future<void> close() async {
+    await _prepareBox();
     await _athleteBox.close();
   }
 
-  // List<Athlete> getTodoItemsByTextContain(String text) {
-  //   var filteredItems = _athleteBox.values
-  //       .where((todoItem) =>
-  //           todoItem.toBeDone.contains(text) &&
-  //           (todoItem.isDeleted == false || todoItem.isDeleted == null))
-  //       .toList();
-  //   return filteredItems;
-  // }
+  Future<Athlete?> login(String email, String password) async {
+    await _prepareBox();
+    var data = _athleteBox.values.where(
+        (athlete) => athlete.email == email && athlete.password == password);
+    if (data.isEmpty) return null;
+    return data.first;
+  }
+
+
 }
+
+
+
