@@ -1,25 +1,61 @@
 import 'package:runmaze2/model/strava_auth.dart';
 
-import 'strava_auth.dart';
+import 'package:hive/hive.dart';
 
+part 'athlete.g.dart';
+
+@HiveType(typeId: 0)
 class Athlete {
 
+  @HiveField(0)
   final int id;
+  
+  @HiveField(1)
   String name;
+  
+  @HiveField(2)
   String email;
+  
+  @HiveField(3)
   String password;
+  
+  @HiveField(4)
   String gender;
+  
+  @HiveField(5)
   String birthdate;
+  
+  @HiveField(6)
   int city;
+  
+  @HiveField(7)
   int club;
+  
+  @HiveField(8)
   int company;
+  
+  @HiveField(9)
   String stravaAthleteId;
+  
+  @HiveField(10)
   String accessToken;
+  
+  @HiveField(11)
   String expiresAt;
+  
+  @HiveField(12)
   String refreshToken;
+  
+  @HiveField(13)
   int clientId;
+  
+  @HiveField(14)
   String clientSecret;
+  
+  @HiveField(15)
   int remoteUpdate;
+  
+  @HiveField(16)
 
   // Constructor
   Athlete({
@@ -41,7 +77,6 @@ class Athlete {
     required this.remoteUpdate,
   });
 
-
   StravaAuth get stravaAuth {
     return StravaAuth(
       athleteId: stravaAthleteId,
@@ -52,9 +87,6 @@ class Athlete {
       clientSecret: clientSecret,
     );
   }
-
-
-
 
   Map<String, dynamic> toJson() {
     return {

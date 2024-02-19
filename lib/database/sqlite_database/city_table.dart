@@ -1,22 +1,22 @@
-import 'package:runmaze2/database/database_helper.dart';
+import 'package:runmaze2/database/sqlite_database/database_helper.dart';
 import 'package:sqflite/sqflite.dart';
 
-import '../model/company.dart'; // Assuming the City model is in a models directory
+import '../../model/city.dart'; // Assuming the City model is in a models directory
 
-class CompanyTable {
-  static const String tableName = 'company_master';
+class CityTable {
+  static const String tableName = 'city_master';
   static const String fieldId = 'row_id';
-  static const String fieldCompanyName = 'company_name';
+  static const String fieldCityName = 'city_name';
 
   final DatabaseHelper dbHelper;
 
-  CompanyTable(this.dbHelper);
+  CityTable(this.dbHelper);
 
   static Future<void> createTable(Database db) async {
     String createTableSql = '''
        CREATE TABLE $tableName (
            $fieldId INTEGER PRIMARY KEY AUTOINCREMENT, 
-           $fieldCompanyName TEXT
+           $fieldCityName TEXT
         )
         ''';
     await db.execute(createTableSql);
@@ -26,7 +26,7 @@ class CompanyTable {
     String createTableSql = '''
       CREATE TABLE IF NOT EXISTS $tableName ( 
         $fieldId INTEGER PRIMARY KEY AUTOINCREMENT, 
-        $fieldCompanyName TEXT
+        $fieldCityName TEXT
         )
         ''';
     await dbHelper.database.then((db) => db.execute(createTableSql));
@@ -38,10 +38,10 @@ class CompanyTable {
     //print('Deleted $deletedCount records');
   }
 
-  Future<void> addCompany(Company company) async {
+  Future<void> addCity(City city) async {
     final insertedId = await dbHelper.database.then((db) => db.insert(
           tableName,
-          company.toMap(),
+          city.toMap(),
           conflictAlgorithm:
               ConflictAlgorithm.replace, // Handle potential conflicts
         ));
@@ -51,21 +51,21 @@ class CompanyTable {
   Future<String> getTextFromId(int id) async {
     final maps = await dbHelper.database.then((db) => db.query(
           tableName,
-          columns: [fieldCompanyName],
+          columns: [fieldCityName],
           where: '$fieldId = ?',
           whereArgs: [id],
         ));
 
     if (maps.isNotEmpty) {
-      return maps.first[fieldCompanyName] as String;
+      return maps.first[fieldCityName] as String;
     } else {
-      return ''; // Handle case where no company is found
+      return ''; // Handle case where no city is found
     }
   }
 
-  Future<List<Company>> getCompanies() async {
+  Future<List<City>> getCities() async {
     final maps = await dbHelper.database
-        .then((db) => db.query(tableName, orderBy: fieldCompanyName));
-    return List.generate(maps.length, (i) => Company.fromMap(maps[i]));
+        .then((db) => db.query(tableName, orderBy: fieldCityName));
+    return List.generate(maps.length, (i) => City.fromMap(maps[i]));
   }
 }

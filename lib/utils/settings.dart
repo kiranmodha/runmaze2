@@ -1,9 +1,9 @@
-import 'package:runmaze2/database/athlete_table.dart';
+import 'package:runmaze2/database/sqlite_database/athlete_table.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-import '../database/database_helper.dart';
+import '../database/sqlite_database/database_helper.dart';
 import '../model/athlete.dart';
 
 class Settings with ChangeNotifier {

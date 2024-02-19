@@ -1,5 +1,5 @@
-import '../model/athlete.dart';
-import '../model/strava_auth.dart';
+import '../../model/athlete.dart';
+import '../../model/strava_auth.dart';
 import 'database_helper.dart';
 
 import 'package:sqflite/sqflite.dart';

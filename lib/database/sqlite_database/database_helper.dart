@@ -1,8 +1,9 @@
-
-
-import 'package:runmaze2/database/athlete_table.dart';
+import 'package:flutter/foundation.dart';
+import 'package:runmaze2/database/sqlite_database/athlete_table.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:runmaze2/database/workout_table.dart';
+import 'package:runmaze2/database/sqlite_database/workout_table.dart';
+import 'dart:core';
+
 
 class DatabaseHelper {
   static const databaseName = 'runmaze.db';
@@ -17,24 +18,30 @@ class DatabaseHelper {
   Future<Database> get database async {
     if (_database != null) return _database!;
 
-    _database = await openDatabase(
-      databaseName,
-      version: databaseVersion,
-      onCreate: _onCreate,
-      onUpgrade: _onUpgrade,
-    );
 
-   // Following code is used temporarily to create tables if they don't exist
-   // _database!.execute("DROP TABLE IF EXISTS athlete");
-   // _database!.execute("DROP TABLE IF EXISTS athlete_master");
-   // await AthleteTable.createTable(_database!);
+    final dbPath = await getDatabasesPath();
+    final databasebNameWithPath = "$dbPath$databaseName";
 
+
+      _database = await openDatabase(
+        // databaseName,
+        databasebNameWithPath,
+        version: databaseVersion,
+        onCreate: _onCreate,
+        onUpgrade: _onUpgrade,
+      );
+
+    
+
+    // Following code is used temporarily to create tables if they don't exist
+    // _database!.execute("DROP TABLE IF EXISTS athlete");
+    // _database!.execute("DROP TABLE IF EXISTS athlete_master");
+    // await AthleteTable.createTable(_database!);
 
     return _database!;
   }
 
   Future _onCreate(Database db, int version) async {
-
     await WorkoutTable.createTable(db);
     await AthleteTable.createTable(db);
 

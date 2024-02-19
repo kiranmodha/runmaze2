@@ -1,4 +1,4 @@
-import 'package:runmaze2/database/database_helper.dart';
+import 'package:runmaze2/database/sqlite_database/database_helper.dart';
 import 'package:runmaze2/model/strava_auth.dart';
 import 'package:sqflite/sqflite.dart';
 
