@@ -23,8 +23,12 @@ class DatabaseHelper {
       onCreate: _onCreate,
       onUpgrade: _onUpgrade,
     );
-    // Following code is used to create tables if they don't exist
-    //await AthleteTable.createTable(_database!);
+
+   // Following code is used temporarily to create tables if they don't exist
+   // _database!.execute("DROP TABLE IF EXISTS athlete");
+   // _database!.execute("DROP TABLE IF EXISTS athlete_master");
+   // await AthleteTable.createTable(_database!);
+
 
     return _database!;
   }

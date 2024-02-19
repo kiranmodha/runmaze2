@@ -13,9 +13,9 @@ class Athlete {
   int city;
   int club;
   int company;
-  int stravaAthleteId;
+  String stravaAthleteId;
   String accessToken;
-  DateTime expiresAt;
+  String expiresAt;
   String refreshToken;
   int clientId;
   String clientSecret;
@@ -112,9 +112,9 @@ class Athlete {
         city: json['city'] as int,
         club: json['club'] as int,
         company: json['company'] as int,
-        stravaAthleteId: json['strava_athlete_id'] as int,
+        stravaAthleteId: json['strava_athlete_id'] as String,
         accessToken: json['access_token'] as String,
-        expiresAt: DateTime.fromMillisecondsSinceEpoch(json['expires_at'] as int),
+        expiresAt: json['expires_at'] as String,
         refreshToken: json['refresh_token'] as String,
         clientId: json['client_id'] as int,
         clientSecret: json['client_secret'] as String,
@@ -133,9 +133,9 @@ class Athlete {
       city: map['city'] as int,
       club: map['club'] as int,
       company: map['company'] as int,
-      stravaAthleteId: map['strava_athlete_id'] as int,
+      stravaAthleteId: map['strava_athlete_id'] as String,
       accessToken: map['access_token'] as String,
-      expiresAt: DateTime.fromMillisecondsSinceEpoch(map['expires_at'] as int),
+      expiresAt: map['expires_at'] as String,
       refreshToken: map['refresh_token'] as String,
       clientId: map['client_id'] as int,
       clientSecret: map['client_secret'] as String,
@@ -156,7 +156,7 @@ class Athlete {
       'company': company,
       'strava_athlete_id': stravaAthleteId,
       'access_token': accessToken,
-      'expires_at': expiresAt.millisecondsSinceEpoch,
+      'expires_at': expiresAt,
       'refresh_token': refreshToken,
       'client_id': clientId,
       'client_secret': clientSecret,

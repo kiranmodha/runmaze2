@@ -33,12 +33,13 @@ class Settings with ChangeNotifier {
   late SharedPreferences _prefs;
 
   Settings() {
-    init();
+    print('Seq 1');
+    //init();
   }
 
   Future<void> init() async {
     _prefs = await SharedPreferences.getInstance();
-    loadFromPreferences();
+    await loadFromPreferences();
   }
 
   void notify() {
@@ -231,12 +232,15 @@ class Settings with ChangeNotifier {
         'url: $_url}';
   }
 
-  void loadFromPreferences() {
+  Future<void> loadFromPreferences()  async {
+
     _athleteId = _prefs.getInt("id") ?? 0;
     _clientId = _prefs.getInt("client_id") ?? 76621;
     _clientSecret = _prefs.getString("client_secret") ??
         "5635717f59e4ade74bf85b16eb0ce74555e25125";
     _loggedIn = _prefs.getBool("logged") ?? false;
+    print('Seq 2');
+    print('loggedIn: $_loggedIn');
     _allowDirectStrava = _prefs.getInt("direct_strava") ?? 0;
     _cityMasterVersion = _prefs.getDouble("city_master_version") ?? 0.0;
     _clubMasterVersion = _prefs.getDouble("club_master_version") ?? 0.0;
@@ -295,6 +299,7 @@ class Settings with ChangeNotifier {
         .eq('password', password);
 
     if (response.isNotEmpty) {
+      print('Login successful from remote database');
       Athlete athlete = Athlete.fromMap(response[0]);
       AthleteTable athleteTable = AthleteTable(DatabaseHelper.instance);
       athleteTable.addAthlete(athlete);
@@ -312,6 +317,7 @@ class Settings with ChangeNotifier {
       loggedIn = true;
       athleteId = athlete.id;
       password = password;
+      print('Login successful from local database');
       return true;
     } else {
       return await loginFromServerDb(username, password);

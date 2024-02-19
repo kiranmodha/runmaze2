@@ -39,13 +39,13 @@ class AthleteTable {
         $fieldCity INTEGER,
         $fieldClub INTEGER,
         $fieldCompany INTEGER,
-        $fieldStravaAthleteId INTEGER
+        $fieldStravaAthleteId TEXT,
         $fieldAccessToken  TEXT, 
-        $fieldExpiresAt INTEGER, 
+        $fieldExpiresAt TEXT, 
         $fieldRefreshToken  TEXT,
         $fieldClientId  INTEGER, 
         $fieldClientSecret  TEXT,  
-        $fieldRemoteUpdate INTEGER,
+        $fieldRemoteUpdate INTEGER
       )
     ''';
     await db.execute(createTableSql);

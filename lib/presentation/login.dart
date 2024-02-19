@@ -7,8 +7,9 @@ class LoginPage extends StatelessWidget {
   final TextEditingController _passwordController = TextEditingController();
 
   @override
-  Widget build(BuildContext context) {
+  Future<Widget> build(BuildContext context) async {
     Settings settings = Provider.of<Settings>(context);
+    settings.init();
     if (settings.loggedIn) {
       // User is already logged in, navigate to home page
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -54,6 +55,51 @@ class LoginPage extends StatelessWidget {
           ),
         ),
       );
+    }
+  }
+}
+
+
+
+
+
+//-----
+class YourWidget extends StatefulWidget {
+  @override
+  _YourWidgetState createState() => _YourWidgetState();
+}
+
+class _YourWidgetState extends State<YourWidget> {
+  bool _initialized = false;
+  late Settings _settings;
+
+  @override
+  void initState() {
+    super.initState();
+    _initSettings();
+  }
+
+  Future<void> _initSettings() async {
+    _settings = Provider.of<Settings>(context, listen: false);
+    await _settings.init();
+    setState(() {
+      _initialized = true;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (!_initialized) {
+      // Show a loading indicator or placeholder widget while initializing
+      return CircularProgressIndicator();
+    }
+
+    if (_settings.loggedIn) {
+      // Return your widget tree if user is logged in
+      return YourLoggedInWidget();
+    } else {
+      // Return your widget tree if user is not logged in
+      return YourLoggedOutWidget();
     }
   }
 }
