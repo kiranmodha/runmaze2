@@ -1,16 +1,15 @@
-# flutter_application_1
 
-A new Flutter project.
+## flow of the program
+ - starts from main.dart
+ - initialize
+    - local Hive database
+    - remote Supabase database
+ - Run MyApp Class in which it will load "LoginPage" class through / route  
 
-## Getting Started
+ - LoginPage class
+    - first initialize Settings class
+    - in the settings it will check whether user is logged already
+    - if not, displays login screen
+    - after login it will display "Home" screen
 
-This project is a starting point for a Flutter application.
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
