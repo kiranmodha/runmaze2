@@ -64,9 +64,9 @@ class Options {
     }
     var response = await http.get(Uri.parse(sqlQuery));
     var dataRow = response.body;
-    clientId = dataRow['client_id'];
-    clientSecret = dataRow['client_secret'];
-    directStrava = dataRow['direct_strava'];
+    // clientId = dataRow['client_id'];
+    // clientSecret = dataRow['client_secret'];
+    // directStrava = dataRow['direct_strava'];
   }
 
   // Future<void> getEvents() async {
@@ -104,13 +104,13 @@ class Options {
 
     final List<Map<String, dynamic>> rows = await Supabase.instance.client
         .from('sports_event').select()
-        .select()
-        .innerJoin('event_participation',
-            on: 'event_id', equals: 'row_id')
-        .eq('event_participation.athlete_id', athleteId)
-        .eq('event_participation.is_active', true)
-        .eq('sports_event.keep_display', true)
-        .execute();
+        .select();
+        // .innerJoin('event_participation',
+        //     on: 'event_id', equals: 'row_id')
+        // .eq('event_participation.athlete_id', athleteId)
+        // .eq('event_participation.is_active', true)
+        // .eq('sports_event.keep_display', true)
+        // .execute();
 
     for (var row in rows) {
       var e = {

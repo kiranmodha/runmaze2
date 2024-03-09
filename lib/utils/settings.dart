@@ -34,7 +34,7 @@ class Settings with ChangeNotifier {
   late SharedPreferences _prefs;
 
   Settings() {
-    print('Seq 1');
+    //print('Seq 1');
     //init();
   }
 
@@ -309,6 +309,33 @@ class Settings with ChangeNotifier {
     return false;
   }
 
+
+    factory Settings.fromJson(Map<String, dynamic> json) {
+      Settings settings = Settings();
+      settings.loggedIn = json['loggedIn'];
+            settings.clientId = json['client_id'] as int;
+      settings.clientSecret = json['client_secret'] as String;
+      settings.allowDirectStrava = json['direct_strava'] as int;
+      settings.cityMasterVersion = json['city_master_version'] as double;
+      settings.clubMasterVersion = json['club_master_version'] as double;
+      settings.companyMasterVersion = json['company_master_version'] as double;
+      settings.gapRequestForWorkout = json['gap_workout_request'] as int;
+      settings.gapRequestForLeaderboard = json['gap_leaderboard_request'] as int;
+      settings.gapRequestForHdcLeaderboard =
+          json['gap_hdc_leaderboard_request'] as int;
+      settings.showHdcLeaderboard = json['show_hdc_leaderboard'] as bool;
+      settings.requiredVersion = json['app_version'] as double;
+      settings.url = json['url'] as String;
+      return settings;
+    } 
+
+
+
+
+
+
+
+
   // Future<bool> loginFromLocalDb(String username, String password) async {
   //   AthleteTable athleteTable = AthleteTable(DatabaseHelper.instance);
   //   Athlete? athlete = await athleteTable.login(username, password);
@@ -346,5 +373,10 @@ class Settings with ChangeNotifier {
     userId = "";
     password = "";
   }
+
+
+
+
+
 
 }

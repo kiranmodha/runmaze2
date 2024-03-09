@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:runmaze2/utils/settings.dart';
 
+
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
@@ -89,14 +90,4 @@ class _LoginPageState extends State<LoginPage> {
   }
 }
 
-Future<void> getOptionsFromServer() async {
-  var client = http.Client();
-  String serverUrl = 'https://runmaze2.000webhostapp.com/api/options/read/';
-  var request = http.Request('POST', Uri.parse(serverUrl));
-  request.body = json.encode({'athlete_id': athleteid.toString()});
-  var response = await client.send(request);
-  final body = await response.stream.bytesToString();
-  settings = Settings.fromJson(body);
-  settings.save();
-  checkMasterDataVersions();
-}
+
