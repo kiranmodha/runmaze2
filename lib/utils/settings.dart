@@ -309,22 +309,21 @@ class Settings with ChangeNotifier {
     return false;
   }
 
-  factory Settings.fromJson(Map<String, dynamic> json) {
-    Settings settings = Settings();
-    settings.clientId = json['client_id'] as int;
-    settings.clientSecret = json['client_secret'] as String;
-    settings.allowDirectStrava = json['direct_strava'] as int;
-    settings.cityMasterVersion = json['city_master_version'] as double;
-    settings.clubMasterVersion = json['club_master_version'] as double;
-    settings.companyMasterVersion = json['company_master_version'] as double;
-    settings.gapRequestForWorkout = json['gap_workout_request'] as int;
-    settings.gapRequestForLeaderboard = json['gap_leaderboard_request'] as int;
-    settings.gapRequestForHdcLeaderboard =
+  loadFromJson(Map<String, dynamic> json) {
+    clientId  = json['client_id'] as int;
+    clientSecret = json['client_secret'] as String;
+    allowDirectStrava  = json['direct_strava'] as int;
+    cityMasterVersion = json['city_master_version'] as double;
+    clubMasterVersion = json['club_master_version'] as double;
+    companyMasterVersion = json['company_master_version'] as double;
+    gapRequestForWorkout = json['gap_workout_request'] as int;
+    gapRequestForLeaderboard = json['gap_leaderboard_request'] as int;
+    gapRequestForHdcLeaderboard =
         json['gap_hdc_leaderboard_request'] as int;
-    settings.showHdcLeaderboard = json['show_hdc_leaderboard'] as bool;
-    settings.requiredVersion = json['app_version'] as double;
-    settings.url = json['url'] as String;
-    return settings;
+    showHdcLeaderboard = json['show_hdc_leaderboard'] as bool;
+    //requiredVersion = json['app_version'] as double;
+    requiredVersion = double.parse(json["app_version"].toString());
+    url = json['url'] as String;
   }
 
   // Future<bool> loginFromLocalDb(String username, String password) async {

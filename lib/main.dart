@@ -1,6 +1,9 @@
+// ignore_for_file: unused_local_variable
+
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:runmaze2/model/athlete.dart';
+import 'package:runmaze2/model/workout.dart';
 import 'package:runmaze2/presentation/home.dart';
 import 'package:runmaze2/presentation/login.dart';
 import 'package:runmaze2/utils/settings.dart';
@@ -13,8 +16,9 @@ void main() async {
   // Set up Hive Database
   await Hive.initFlutter();
   Hive.registerAdapter(AthleteAdapter());
-  // ignore: unused_local_variable
   var athleteBox = await Hive.openBox<Athlete>('athletes');
+  Hive.registerAdapter(WorkoutAdapter());
+  var workoutBox = await Hive.openBox<Workout>('workouts');
 
   // Set up Supabase
   await Supabase.initialize(

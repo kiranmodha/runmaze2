@@ -1,17 +1,41 @@
 // ignore_for_file: non_constant_identifier_names
+import 'package:hive/hive.dart';
 
+part 'workout.g.dart';
+
+@HiveType(typeId: 1)
 class Workout {
+
+  @HiveField(0)
   int row_id;
+
+  @HiveField(1)
   DateTime workout_date;
+
+  @HiveField(2)
   int athlete_id;
+
+  @HiveField(3)
   double distance;
+
+  @HiveField(4)
   String activity_type;
+
+  @HiveField(5)
   int duration_hh;
+
+  @HiveField(6)
   int duration_mm;
+
+  @HiveField(7)
   int duration_ss;
+
+  @HiveField(8)
   String link;
+
+  @HiveField(9)
   int remote_update;
-  String object_id;
+
 
   Workout({
     required this.row_id,
@@ -24,22 +48,20 @@ class Workout {
     required this.duration_ss,
     required this.link,
     required this.remote_update,
-    required this.object_id,
   });
 
   factory Workout.fromMap(Map<String, dynamic> map) {
     return Workout(
-      row_id: map['row_id'],
-      workout_date: DateTime.parse(map['workout_date']),
+      row_id: map['id'],
+      workout_date: DateTime.parse(map['date']),
       athlete_id: map['athlete_id'],
-      distance: map['distance'],
-      activity_type: map['activity_type'],
-      duration_hh: map['duration_hh'],
-      duration_mm: map['duration_mm'],
-      duration_ss: map['duration_ss'],
+      distance: double.parse(map['distance'].toString()),
+      activity_type: map['type'],
+      duration_hh: map['hh'],
+      duration_mm: map['mm'],
+      duration_ss: map['ss'],
       link: map['link'],
       remote_update: map['remote_update'],
-      object_id: map['object_id'],
     );
   }
 
@@ -54,7 +76,6 @@ class Workout {
     int? duration_ss,
     String? link,
     int? remote_update,
-    String? object_id,
   }) =>
       Workout(
         row_id: row_id ?? this.row_id,
@@ -67,7 +88,6 @@ class Workout {
         duration_ss: duration_ss ?? this.duration_ss,
         link: link ?? this.link,
         remote_update: remote_update ?? this.remote_update,
-        object_id: object_id ?? this.object_id,
       );
 
   Map<String, dynamic> getJsonObject() {
