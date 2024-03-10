@@ -107,8 +107,9 @@ class _HomePageState extends State<HomePage> {
             children: <Widget>[
               Text('Welcome $username'),
               const SizedBox(height: 24.0),
-              const Card(
-                child: RecentActivitiesFragment(),
+              Card(
+                margin: EdgeInsets.all(16.0),
+                child: recentActivitiesFragment1(),
               ),
             ],
           ),
@@ -116,6 +117,88 @@ class _HomePageState extends State<HomePage> {
       );
     }
   }
+}
+
+Widget recentActivitiesFragment1() {
+  return Container(
+    margin: EdgeInsets.all(16.0),
+    padding: const EdgeInsets.all(16.0),
+    decoration: BoxDecoration(
+      border: Border.all(color: Colors.purple[200]!),
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildHeader("RECENT ACTIVITIES"),
+        const SizedBox(height: 16.0),
+        _buildActivityItem(
+            "ride", "9.04 km", "01:07:46", "6:35 min/km", "Yesterday"),
+        SizedBox(height: 16.0),
+        _buildActivityItem(
+            "run", "14.20 km", "01:25:46", "7:05 min/km", "Sun, 30/12/21"),
+      ],
+    ),
+  );
+}
+
+Widget _buildHeader(String text) {
+  return Text(
+    text,
+    style: TextStyle(
+      fontWeight: FontWeight.bold,
+      fontSize: 14.0,
+      color: Colors.purple[200],
+    ),
+  );
+}
+
+Widget _buildButton(String text) {
+  return TextButton(
+    onPressed: () {}, // Add functionality for button press
+
+    style: TextButton.styleFrom(
+      padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 5.0),
+      backgroundColor: Colors.grey[200],
+    ),
+    child: Text(
+      text,
+      style: const TextStyle(
+        fontSize: 12.0,
+        color: Color.fromARGB(255, 37, 29, 39),
+      ),
+    ),
+  );
+}
+
+Widget _buildActivityItem(
+    String image, String distance, String duration, String pace, String date) {
+  return Row(
+    children: [
+      Image.asset(
+        "assets/images/$image.png", // Assuming image resources are in assets folder
+        width: 32.0,
+        height: 32.0,
+      ),
+      const SizedBox(width: 16.0),
+      Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(distance),
+          const SizedBox(height: 4.0),
+          Text(duration),
+        ],
+      ),
+      const Spacer(),
+      Column(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          Text(pace),
+          const SizedBox(height: 4.0),
+          Text(date),
+        ],
+      ),
+    ],
+  );
 }
 
 class RecentActivitiesFragment extends StatelessWidget {
@@ -137,15 +220,15 @@ class RecentActivitiesFragment extends StatelessWidget {
           const SizedBox(height: 16.0), // Margin between headers
           _buildHeader("RECENT ACTIVITIES"),
           const SizedBox(height: 16.0), // Margin between headers
-          Row(
+          const Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text("SHOW MORE"),
+              Text("SHOW MORE"),
               //_buildActivityItem("ride", "9.04 km", "01:07:46", "6:35 min/km", "Yesterday"),
             ],
           ),
           const SizedBox(height: 16.0), // Margin between activities
-          Row(
+          const Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               const Text("SHOW MORE"),
@@ -167,8 +250,7 @@ class RecentActivitiesFragment extends StatelessWidget {
       style: TextStyle(
         fontWeight: FontWeight.bold,
         fontSize: 14.0,
-        color: Colors.purple[
-            200], // Assuming color_purple_200 translates to Colors.purple[200]
+        color: Colors.purple[200],
       ),
     );
   }
