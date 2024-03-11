@@ -1,14 +1,16 @@
+// ignore_for_file: must_be_immutable
+
 import 'package:flutter/material.dart';
 import 'package:runmaze2/database/hive_database/workout_hive.dart';
-import 'package:runmaze2/utils/settings.dart';
 import 'package:runmaze2/model/workout.dart';
 
 class RecentActivitiesFragment extends StatelessWidget {
-  const RecentActivitiesFragment({super.key});
+  RecentActivitiesFragment({super.key});
+
+  late Workouts _workouts;
 
   @override
   Widget build(BuildContext context) {
-    showActivities();
     return _recentActivitiesFragment();
   }
 
@@ -58,10 +60,7 @@ class RecentActivitiesFragment extends StatelessWidget {
   Widget _buildHeader(String text) {
     return Text(
       text,
-      style: const TextStyle(
-        fontWeight: FontWeight.bold,
-        fontSize: 14.0,
-      ),
+      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14.0),
     );
   }
 
@@ -72,47 +71,43 @@ class RecentActivitiesFragment extends StatelessWidget {
       style: TextButton.styleFrom(
         backgroundColor: Colors.grey[200],
         shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16.0),
-            side: BorderSide(color: Colors.purple[200]!)),
+          borderRadius: BorderRadius.circular(16.0),
+          side: BorderSide(color: Colors.purple[200]!),
+        ),
       ),
       child: Text(
         text,
-        style: const TextStyle(
-          fontSize: 12.0,
-          color: Colors.purple,
-        ),
+        style: const TextStyle(fontSize: 12.0, color: Colors.purple),
       ),
     );
   }
 
   Widget _buildActivityItem(String image, String distance, String duration,
       String pace, String date) {
-    return Row(
-      children: [
-        Image.asset(
-          "assets/images/$image.png", // Assuming image resources are in assets folder
-          width: 32.0,
-          height: 32.0,
-        ),
-        const SizedBox(width: 16.0),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(distance),
-            const SizedBox(height: 4.0),
-            Text(duration),
-          ],
-        ),
-        const Spacer(),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            Text(pace),
-            const SizedBox(height: 4.0),
-            Text(date),
-          ],
-        ),
-      ],
-    );
+    return Row(children: [
+      Image.asset(
+        "assets/images/$image.png", // Assuming image resources are in assets folder
+        width: 32.0,
+        height: 32.0,
+      ),
+      const SizedBox(width: 16.0),
+      Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(distance),
+          const SizedBox(height: 4.0),
+          Text(duration),
+        ],
+      ),
+      const Spacer(),
+      Column(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          Text(pace),
+          const SizedBox(height: 4.0),
+          Text(date),
+        ],
+      ),
+    ]);
   }
 }

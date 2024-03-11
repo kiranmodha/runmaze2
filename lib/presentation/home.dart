@@ -6,7 +6,7 @@ import 'package:runmaze2/database/hive_database/workout_hive.dart';
 import 'package:runmaze2/utils/settings.dart';
 import 'package:http/http.dart' as http;
 import 'package:runmaze2/model/workout.dart';
-import 'package:runmaze2/presentation/widgets/recent_activities_fragment.dart';
+import 'package:runmaze2/presentation/fragments/recent_activities_fragment.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -100,7 +100,7 @@ class _HomePageState extends State<HomePage> {
             children: <Widget>[
               Text('Welcome $username'),
               const SizedBox(height: 24.0),
-              const RecentActivitiesFragment(),
+               RecentActivitiesFragment(),
             ],
           ),
         ),
