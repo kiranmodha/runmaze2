@@ -82,4 +82,15 @@ class WorkoutHive {
     await _prepareBox();
     await _workoutBox.close();
   }
+
+  /// Returns last two workouts
+  Future<List<Workout>> getRecentWorkouts() async {
+    await _prepareBox();
+    final List<Workout> allWorkouts = _workoutBox.values.toList();
+    if (allWorkouts.length >= 2) {
+      return allWorkouts.sublist(allWorkouts.length - 2);
+    } else {
+      return allWorkouts;
+    }
+  }
 }
