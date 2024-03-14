@@ -1,13 +1,27 @@
-// ignore_for_file: must_be_immutable
+// ignore_for_file: must_be_immutable, library_private_types_in_public_api
 
 import 'package:flutter/material.dart';
 import 'package:runmaze2/database/hive_database/workout_hive.dart';
 import 'package:runmaze2/model/workout.dart';
 
-class RecentActivitiesFragment extends StatelessWidget {
-  RecentActivitiesFragment({super.key});
+class RecentActivitiesFragment extends StatefulWidget {
+  const RecentActivitiesFragment({super.key});
 
-  late Workouts _workouts;
+  @override
+  _RecentActivitiesPageState createState() => _RecentActivitiesPageState();
+}
+
+class _RecentActivitiesPageState extends State<RecentActivitiesFragment> {
+  bool _initialized = false;
+  List<Workout> _workouts = [];
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await loadActivities();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,6 +50,13 @@ class RecentActivitiesFragment extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 16.0),
+            for (Workout workout in _workouts)
+              _buildActivityItem(
+                  workout.activity_type,
+                  workout.duration_hh.toString(),
+                  workout.distance.toString(),
+                  workout.getPace(),
+                  workout.getDateTime().toString()),
             _buildActivityItem(
                 "ride", "9.04 km", "01:07:46", "6:35 min/km", "Yesterday"),
             const SizedBox(height: 16.0),
@@ -51,10 +72,13 @@ class RecentActivitiesFragment extends StatelessWidget {
     );
   }
 
-  Future<void> showActivities() async {
+  Future<void> loadActivities() async {
     WorkoutHive workoutHive = WorkoutHive();
-    final workouts = await workoutHive.getRecentWorkouts();
-    for (Workout workout in workouts) {}
+    _workouts = await workoutHive.getRecentWorkouts();
+    setState(() {
+      _initialized = true;
+    });
+    //for (Workout workout in workouts) {}
   }
 
   Widget _buildHeader(String text) {
